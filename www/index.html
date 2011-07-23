@@ -20,12 +20,12 @@
 <script src="script/jquery.tmpl.js"></script>
 <script type = "text/javascript" charset="utf-8" src = "script/jquery-mobile.js"></script>
 <link rel = "stylesheet" href = "css/jquery-mobile.css" />
-<link rel = "stylesheet" href = "css/main.css" />
 <!-- Application logic -->
 <script type = "text/javascript" charset="utf-8" src = "index.js"></script>
 <script type = "text/javascript" charset="utf-8" src = "script/database.js"></script>
 <!-- iPhone theme -->
 <link rel = 'stylesheet' href = 'css/styles.css' />
+<link rel = "stylesheet" href = "css/main.css" />
 <script id="restListTemplate" type="text/x-jquery-tmpl"> 
     <li onclick="getRestDetails('${index}')" class = 'restaurantListItem' id = 'restaurant${index}'>
     	<a href="#" style = 'width: 85%'>
@@ -121,24 +121,24 @@
 		</div>
 	</div>
 	<div data-role = "page" id = "createAddress">
-		<div data-role = "header"><h1>New Address</h1></div>
 		<div data-role = "content">
+			<img class = 'headerImg' src = 'images/logo-small.png' />
 			<li data-role = 'listview' data-inset = 'true'>
 				<div class = 'formInput'>
 					<div class = 'formLabel'>Address:</div>
-					<input type = "text" name = "addr" id = "createAddressAddress"></input>
+					<input type = "text" data-role = 'none' name = "addr" id = "createAddressAddress"></input>
 				</div>
 				<div  class = 'formInput'>
 					<div class = 'formLabel'>City:</div>
-					<input type = "text" name = "city" id = "createAddressCity"></input>
+					<input type = "text" data-role = 'none' name = "city" id = "createAddressCity"></input>
 				</div>
 				<div  class = 'formInput'>
 					<div class = "formLabel">State:</div>
-					<input type = "text" name = "state" id = "createAddressState"></input>
+					<input type = "text" data-role = 'none' name = "state" id = "createAddressState"></input>
 				</div>
 				<div  class = 'formInput'>
 					<div class = 'formLabel'>Zip Code:</div>
-					<input type = "text" name = "zip" id = "createAddressZip"></input>
+					<input type = "text" data-role = 'none' name = "zip" id = "createAddressZip"></input>
 				</div>
 				<div data-role = "button" id = "createAddress_btn" data-icon = "check">Create</div>
 			</div>
