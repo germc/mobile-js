@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
+<title>PhoneGap</title>
+<!-- Phone Gap JS -->
+<script type="text/javascript" charset="utf-8" src="script/phonegap.0.9.6.js"></script>
+
+
+<!-- Ordr.in JS Api -->
+<script type="text/javascript" src="script/Address.js"></script>
+<script type="text/javascript" src="script/DateTime.js"></script>
+<script type="text/javascript" src="script/Money.js"></script>
+<script type="text/javascript" src="script/Ordrin.js"></script>
+<!-- Jquery Mobile -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+<script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+<script type = "text/javascript" charset="utf-8" src = "http://code.jquery.com/mobile/1.0a4/jquery.mobile-1.0a4.js"></script>
+<link rel = "stylesheet" href = "http://code.jquery.com/mobile/1.0a4/jquery.mobile-1.0a4.css" />
+<!-- Application logic -->
+<script type = "text/javascript" charset="utf-8" src = "script/index.js"></script>
+<link rel = "stylesheet" href = "css/main.css" />
+
+</head>
+<body>
+	
+	<div data-role = "page" id = "restaurant">
+		<div data-role = "header"><h1>Ordr.in</h1></div>
+		<div data-role = "content">
+			<ul data-role="listview" id="restList" data-theme="g">
+			</ul>
+			<a href = "#login" data-rel = "dialog" data-role="button">Click Me</a><br/>
+		</div>
+	</div>
+	<div data-role = "page" id = "login">
+		<div data-role = "header"><h1>Please Login</h1></div>
+		<div data-role = "content">
+			<div data-role = "fieldcontain">
+				<label for = "email" class = "ui-input-text">Email: </label>
+				<input type = "text" name = "email" id = "loginEmail"></input>
+			</div>
+			<div data-role = "fieldcontain">
+				<label for = "password" class = "ui-input-text">Password: </label>
+				<input type = 'password' name = 'password' id = "loginPassword"></input>
+			</div>
+			<div data-role = "button" id = "login_btn" data-icon = "check">Login</div>
+			<a data-role = "button" id = "createAccount_btn" data-rel = "dialog" href = "#createAccount" data-transition = "slidedown" data-icon = "plus">Create Account</a>
+		</div>
+	</div> 
+	<div data-role = "dialog" data-icon = "alert" id = "error">
+		<div data-role = "header"><h1>Error</h1></div>
+		<div data-role = "content">
+			<p id = "errorMsg"></p>
+			<div data-role = "button" id = "errorClose_btn" data-icon = "check">Ok</div>
+		</div>
+	</div>
+	<div data-role = "page" id = "createAccount">
+		<div data-role = "header"><h1>New Account</h1></div>
+		<div data-role = "content">
+			<form action = "#" method = "get">
+				<div data-role = "fieldcontain">
+					<label for = "email" class = "ui-input-text">Email: </label>
+					<input type = "text" name = "email" id = "createEmail"></input>
+				</div>
+				<div data-role = "fieldcontain">
+					<label for = "password"  class = "ui-input-text">Password: </label>
+					<input type = "password" name = "password" id = "createPassword"></input>
+				</div>
+				<div data-role = "fieldcontain">
+					<label for = "first"  class = "ui-input-text">First Name: </label>
+					<input type = "text" name = "first" id = "createFirstName"></input>
+				</div>
+				<div data-role = 'fieldcontain'>
+					<label for = "last"  class = "ui-input-text">Last Name: </label>
+					<input type x= "text" name = "last" id = "createLastName"></input>
+				</div>
+				<div data-role = "button" id = "postAccount_btn" data-icon = "check">Create</div>
+			</form>
+		</div>
+	</div>
+	<div data-role = "page" id = "createAddress">
+		<div data-role = "header"><h1>New Address</h1></div>
+		<div data-role = "content">
+			<div data-role = "fieldcontain">
+				<label for = "name" class = "ui-input-text">Name:</label>
+				<input type = "text" name = "name" id = "createAddressName"></input>
+			</div>
+			<div data-role = "fieldcontain">
+				<label for = "addr" class = "ui-input-text">Address:</label>
+				<input type = "text" name = "addr" id = "createAddressAddress"></input>
+			</div>
+			<div data-role = "fieldcontain">
+				<label for = "addr" class = "ui-input-text">Address (optional second line): </label>
+				<input type = "text" name = "addr" id = "createAddressAddress"></input>
+			</div>
+			<div data-role = "fieldcontain">
+				<label for = "city" class = "ui-input-text">City:</label>
+				<input type = "text" name = "city" id = "createAddressCity"></input>
+			</div>
+			<div data-role = "fieldcontain">
+				<label for = "state" class = "ui-input-text">State:</label>
+				<input type = "text" name = "state" id = "createAddressState"></input>
+			</div>
+			<div data-role = "fieldcontain">
+				<label for = "zip" class = "ui-input-text">Zip:</label>
+				<input type = "text" name = "zip" id = "createAddressZip"></input>
+			</div>
+			<div data-role = "fieldcontain">
+				<label for = "phone" class = "ui-input-text">Phone:</label>
+				<input type = "text" name = "phone" id = "createAddressPhone"></input>
+			</div>
+			<div data-role = "button" id = "createAddress_btn" data-icon = "check">Create</div>
+		</div>
+	</div>
+</body>
+</html>

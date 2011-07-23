@@ -1,0 +1,197 @@
+<!--
+	TODO: Add footers (they will probbably be some form of icony nav bar)
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
+<title>iPhone</title>
+<!-- Phone Gap JS -->
+<script type="text/javascript" charset="utf-8" src="phonegap.0.9.6.min.js"></script>
+
+
+<!-- Ordr.in JS Api -->
+<script type="text/javascript" src="script/Address.js"></script>
+<script type="text/javascript" src="script/DateTime.js"></script>
+<script type="text/javascript" src="script/Money.js"></script>
+<script type="text/javascript" src="script/Ordrin.js"></script>
+<!-- Jquery Mobile -->
+<script type="text/javascript" src="script/jquery.js"></script>
+<script src="script/jquery.tmpl.js"></script>
+<script type = "text/javascript" charset="utf-8" src = "script/jquery-mobile.js"></script>
+<link rel = "stylesheet" href = "css/jquery-mobile.css" />
+<link rel = "stylesheet" href = "css/main.css" />
+<!-- Application logic -->
+<script type = "text/javascript" charset="utf-8" src = "index.js"></script>
+<script type = "text/javascript" charset="utf-8" src = "script/database.js"></script>
+<!-- iPhone theme -->
+<link rel = 'stylesheet' href = 'css/styles.css' />
+<script id="restListTemplate" type="text/x-jquery-tmpl"> 
+    <li onclick="getRestDetails('${index}')" class = 'restaurantListItem' id = 'restaurant${index}'>
+    	<a href="#" style = 'width: 85%'>
+			<h3 style="width:75%; white-space:normal">${na}</h3>
+			<p>${ad}</p>
+			{{if isDel}}
+				<p class="ui-li-aside" style="float:right; width=25%; padding-top:8px;"><strong>Delivering Now</strong></p>
+			{{else}}
+				<p class="ui-li-aside" style="float:right; width:25%; padding-top: 8px;">Not Delivering</p>
+			{{/if}}
+		</a>
+    </li>
+</script>
+<script id="menuListTemplate" type="text/x-jquery-tmpl">
+	<li>
+		<b>${name}</b>
+		<ul>
+		{{each children}}
+			<li>
+				<div style="width:80%; white-space:normal">
+					<h3>${name}</h3>
+					<p style="white-space: normal;">${descrip}</p>
+				</div>
+				<p class="ui-li-aside" style="flat:right; padding-top:8px; width: 20%;">$ ${price}</p>
+			</li>
+			{{/each}}
+		</ul>
+	</li>
+</script>
+
+</head>
+<body>
+	
+	<div data-role = "page" id = "restaurant">
+		<div data-id = 'header' data-role = "header">
+			<h1>Ordr.in</h1>
+			<a href = "#" id = 'restaurantSelectorParent'>
+				<select name="select-choice-a" id="restaurantTypes_selector" data-native-menu="false">
+					<option value = "all">All</option>
+				</select>
+			</a>
+			<a href = "#settings" data-icon = 'gear'>Settings</a>
+		</div>
+		<div data-role = "content">
+			<ul data-role="listview" id="restList" data-theme="c">
+			</ul>
+		</div>
+	</div>
+	<div data-role = "page" id = "login">
+		<div data-role = "header"><h1>Please Login</h1></div>
+		<div data-role = "content">
+			<div >
+				<label for = "email" class = "ui-input-text">Email: </label>
+				<input type = "text" name = "email" id = "loginEmail"></input>
+			</div>
+			<div >
+				<label for = "password" class = "ui-input-text">Password: </label>
+				<input type = 'password' name = 'password' id = "loginPassword"></input>
+			</div>
+			<div data-role = "button" id = "login_btn" data-icon = "check">Login</div>
+			<a data-role = "button" id = "createAccount_btn" data-rel = "dialog" href = "#createAccount" data-transition = "slidedown" data-icon = "plus">Create Account</a>
+		</div>
+	</div> 
+	<div data-role = "dialog" data-icon = "alert" id = "error">
+		<div data-role = "header"><h1>Error</h1></div>
+		<div data-role = "content">
+			<p id = "errorMsg"></p>
+			<a href = "#" data-role = "button" id = "errorClose_btn" data-icon = "check" data-rel = "back">Ok</a>
+		</div>
+	</div>
+	<div data-role = "page" id = "createAccount">
+		<div data-role = "header"><h1>New Account</h1></div>
+		<div data-role = "content">
+			<form action = "#" method = "get">
+				<div >
+					<label for = "email" class = "ui-input-text">Email: </label>
+					<input type = "text" name = "email" id = "createEmail"></input>
+				</div>
+				<div >
+					<label for = "password"  class = "ui-input-text">Password: </label>
+					<input type = "password" name = "password" id = "createPassword"></input>
+				</div>
+				<div >
+					<label for = "first"  class = "ui-input-text">First Name: </label>
+					<input type = "text" name = "first" id = "createFirstName"></input>
+				</div>
+				<div data-role = ''>
+					<label for = "last"  class = "ui-input-text">Last Name: </label>
+					<input type x= "text" name = "last" id = "createLastName"></input>
+				</div>
+				<div data-role = "button" id = "postAccount_btn" data-icon = "check">Create</div>
+			</form>
+		</div>
+	</div>
+	<div data-role = "page" id = "createAddress">
+		<div data-role = "header"><h1>New Address</h1></div>
+		<div data-role = "content">
+			<li data-role = 'listview' data-inset = 'true'>
+				<div class = 'formInput'>
+					<div class = 'formLabel'>Address:</div>
+					<input type = "text" name = "addr" id = "createAddressAddress"></input>
+				</div>
+				<div  class = 'formInput'>
+					<div class = 'formLabel'>City:</div>
+					<input type = "text" name = "city" id = "createAddressCity"></input>
+				</div>
+				<div  class = 'formInput'>
+					<div class = "formLabel">State:</div>
+					<input type = "text" name = "state" id = "createAddressState"></input>
+				</div>
+				<div  class = 'formInput'>
+					<div class = 'formLabel'>Zip Code:</div>
+					<input type = "text" name = "zip" id = "createAddressZip"></input>
+				</div>
+				<div data-role = "button" id = "createAddress_btn" data-icon = "check">Create</div>
+			</div>
+		</div>
+	</div>
+
+	<div data-id = 'header' data-add-back-btn="true" id="restDetails" data-role="page">
+		<div data-id = 'header' data-role="header">
+			<a href = "#" data-rel = 'back' data-icon="arrow-l">Back</a>
+			<a href = "#settings" data-icon = 'gear'>Settings</a>
+			<h1 id="restName"></h1>
+		</div>
+		<div data-role="content">
+			<div data-role="collapsible">
+				<h3>Restaurant Information</h3>
+				<div class="details-pane">
+					<fieldset class="ui-grid-a">
+						<span class="ui-block-a" style="text-align: center;">Address:</span>
+						<span class="ui-block-b" style="text-align: center;" id="rAddress"></span>
+					</fieldset
+					<br />
+					<hr />
+					<fieldset class="ui-grid-a">
+						<span class="ui-block-a" style="text-align: center;">Minimum order for delivery:</span>
+						<span class="ui-block-b" style="text-align: center" id="minimumDelivery"></span>
+					</fieldset>
+					<hr />
+					<fieldset class="ui-grid-a">
+						<span class="ui-block-a" style="text-align: center;">Estimated delivery time:</span>
+						<span class="ui-block-b" style="text-align: center" id="estimatedDelivery"></span>
+					</fieldset>
+				</div>
+			</div>
+			<br />
+			<li data-role="listview" id="menu">
+			</li>
+		</div>
+	</div>
+	<div data-role = "page" id = "settings">
+		<div data-id = 'header' data-role = 'header'>
+			<h1>Settings</h1>
+		</div>
+		<div data-role = 'content'>
+			<ul data-role = 'listview'>
+			</ul>
+		</div>
+	</div>
+	<div data-role = "page" id = "selectAddress">
+		<div data-role = "header"><h1>Select Address</h1></div>
+		<div data-role = "content">
+			<ul data-role = "listview" id = "addressList">
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+.details-pane {
+	width: 98%;
+	margin: auto;
+	background-color: #F5F5F5;
+	-webkit-border-radius: 8px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.formInput{
+	border-bottom: 2px solid #e9e9e7;
+}
+.formLabel {
+	float: left;
+}
+.formInput input{
+	float: left;
+}
