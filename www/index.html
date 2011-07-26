@@ -4,8 +4,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
-<title>iPhone</title>
+	<title>iPhone</title>
 <!-- Phone Gap JS -->
 <script type="text/javascript" charset="utf-8" src="phonegap.0.9.6.min.js"></script>
 
@@ -18,8 +17,10 @@
 <!-- Jquery Mobile -->
 <script type="text/javascript" src="script/jquery.js"></script>
 <script src="script/jquery.tmpl.js"></script>
-<script type = "text/javascript" charset="utf-8" src = "script/jquery-mobile.js"></script>
-<link rel = "stylesheet" href = "css/jquery-mobile.css" />
+<script type = "text/javascript" charset="utf-8" src = "jquery/jquery.mobile-1.0b1.js"></script>
+<link rel = "stylesheet" href = "jquery/jquery.mobile-1.0b1.min.css" />
+<!-- Google Maps API -->
+<script src = "script/maps.js" type = "text/javascript"></script>
 <!-- Application logic -->
 <script type = "text/javascript" charset="utf-8" src = "index.js"></script>
 <script type = "text/javascript" charset="utf-8" src = "script/database.js"></script>
@@ -27,24 +28,25 @@
 <link rel = 'stylesheet' href = 'css/styles.css' />
 <link rel = "stylesheet" href = "css/main.css" />
 <script id="restListTemplate" type="text/x-jquery-tmpl"> 
-    <li onclick="getRestDetails('${index}')" class = 'restaurantListItem' id = 'restaurant${index}'>
-    	<a href="#" style = 'width: 85%'>
+    <li class = 'restaurantListItem' id = 'restaurant${index}'>
+    <span onclick="getRestDetails('${index}')" class = "ui-link-inherit" style = 'width: 85%'>
 			<h3 style="width:75%; white-space:normal">${na}</h3>
+			<p class = 'cuisineList'>${cuisines}</p>
 			<p>${ad}</p>
 			{{if isDel}}
-				<p class="ui-li-aside" style="float:right; width=25%; padding-top:8px;"><strong>Delivering Now</strong></p>
+				<p><strong>Delivering Now</strong></p>
 			{{else}}
-				<p class="ui-li-aside" style="float:right; width:25%; padding-top: 8px;">Not Delivering</p>
+				<p>Not Delivering</p>
 			{{/if}}
-		</a>
+		</span>
     </li>
 </script>
 <script id="menuListTemplate" type="text/x-jquery-tmpl">
-	<li>
+	<li onclick="setCurrMenu('${index}')>
 		<b>${name}</b>
-		<ul>
+		<ul data-inset = "true">
 		{{each children}}
-			<li>
+			<li onclick="populateExtras('${id}')">
 				<div style="width:80%; white-space:normal">
 					<h3>${name}</h3>
 					<p style="white-space: normal;">${descrip}</p>
@@ -55,13 +57,24 @@
 		</ul>
 	</li>
 </script>
+<script id="extrasTemplate" type="text/x-jquery-tmpl">
+	<li data-role="list-divider" id="name">${name} Chose ${max_child_select}</li>
+	<li data-role="fieldcontain">
+		<fieldset data-role="controlgroup">
+		{{each children}}
+			<input type="checkbox" id="extra_${id}" name="extra_${id}" class="custom"/>
+			<label for="extra_${id}">${name}&nbsp;&nbsp;&nbsp;$${price}</label>
+		{{/each}}
+		</fieldset>
+	</li>		
+</script>
 
 </head>
 <body>
 	
 	<div data-role = "page" id = "restaurant">
 		<div data-id = 'header' data-role = "header">
-			<h1>Ordr.in</h1>
+			<h1>Restaurants</h1>
 			<a href = "#" id = 'restaurantSelectorParent'>
 				<select name="select-choice-a" id="restaurantTypes_selector" data-native-menu="false">
 					<option value = "all">All</option>
@@ -70,8 +83,18 @@
 			<a href = "#settings" data-icon = 'gear'>Settings</a>
 		</div>
 		<div data-role = "content">
-			<ul data-role="listview" id="restList" data-theme="c">
+			<ul data-role="listview" id="restList" data-filter = 'true'>
 			</ul>
+		</div>
+		<div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
+			<div data-role = "navbar" class = "mainFooter">
+				<ul>
+					<li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
+					<li><a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a></li>
+					<li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
+					<li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
+				</ul>
+			</div>
 		</div>
 	</div>
 	<div data-role = "page" id = "login">
@@ -123,7 +146,9 @@
 	<div data-role = "page" id = "createAddress">
 		<div data-role = "content">
 			<img class = 'headerImg' src = 'images/logo-small.png' />
-			<li data-role = 'listview' data-inset = 'true'>
+			<p id = "createAddressHeader"></p>
+			<p id = "createAddressSub"></p>
+			<li data-role = 'listview' class = 'formGroup' data-inset = 'true'>
 				<div class = 'formInput'>
 					<div class = 'formLabel'>Address:</div>
 					<input type = "text" data-role = 'none' name = "addr" id = "createAddressAddress"></input>
@@ -147,34 +172,33 @@
 
 	<div data-id = 'header' data-add-back-btn="true" id="restDetails" data-role="page">
 		<div data-id = 'header' data-role="header">
-			<a href = "#" data-rel = 'back' data-icon="arrow-l">Back</a>
-			<a href = "#settings" data-icon = 'gear'>Settings</a>
-			<h1 id="restName"></h1>
+			<a href = "#" data-rel = 'back' data-icon="arrow-l">Restaurants</a>
+			<h1 class="restName"></h1>
 		</div>
-		<div data-role="content">
-			<div data-role="collapsible">
-				<h3>Restaurant Information</h3>
-				<div class="details-pane">
-					<fieldset class="ui-grid-a">
-						<span class="ui-block-a" style="text-align: center;">Address:</span>
-						<span class="ui-block-b" style="text-align: center;" id="rAddress"></span>
-					</fieldset
-					<br />
-					<hr />
-					<fieldset class="ui-grid-a">
-						<span class="ui-block-a" style="text-align: center;">Minimum order for delivery:</span>
-						<span class="ui-block-b" style="text-align: center" id="minimumDelivery"></span>
-					</fieldset>
-					<hr />
-					<fieldset class="ui-grid-a">
-						<span class="ui-block-a" style="text-align: center;">Estimated delivery time:</span>
-						<span class="ui-block-b" style="text-align: center" id="estimatedDelivery"></span>
-					</fieldset>
-				</div>
+		<div style="padding-top: 0" data-role="content">
+			<div id = 'restaurantInfo'>
+				<span style="width:75%; white-space:normal" class = "restName" id = 'restHeader'></span><br />
+				<span id = 'cuisineList'></span>
+				<span id = 'rAddress'></span><br />
+				<span>
+					<span class="left">Deliver in <span id = 'estimatedDelivery'></span></span>
+					<span class='right'>Minimum <span id = 'minimumDelivery'></span></span>
+				</span>
 			</div>
-			<br />
+			<div style = "clear: both;"></div>
+			<div id = 'menuHeader'>Menu Sections</div>
 			<li data-role="listview" id="menu">
 			</li>
+		</div>
+		<div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
+			<div data-role = "navbar" class = "mainFooter">
+				<ul>
+					<li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
+					<li><a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a></li>
+					<li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
+					<li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
+				</ul>
+			</div>
 		</div>
 	</div>
 	<div data-role = "page" id = "settings">
@@ -191,6 +215,15 @@
 		<div data-role = "content">
 			<ul data-role = "listview" id = "addressList">
 			</ul>
+		</div>
+	</div>
+	<div data-role="page" id="menuExtras">
+		<div data-role = "header"><h1 id="extrasHeader"></h1></div>
+		<div data-role = "content" id="extraContent">
+			<form id="extrasForm">
+			</form>
+			<br />
+			<input type="button" id="submitExtras" value="Ok" onclick="validateForm();" />
 		</div>
 	</div>
 </body>
