@@ -136,10 +136,42 @@
 	color: #c8445c;
 }
 
+.typeName{
+	color: #C8445C;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.typeDescrip{
+	font-weight: normal;
+	color: #737369;
+}
+
+.typeInfo{
+	margin-bottom: 5px;
+}
+
+.foodItems li{
+	border-color: #E3E5E2;
+}
+
 .right{
 	float: right;
 }
 
 .left{
 	float: left;
+}
+/* Extras page */
+#itemDescrip{
+  font-size: 14px;
+  color: #737369;
+}
+
+#itemName{
+  font-weight: bold;
+  color: #000000;
+}
+#extrasList li{
+  background-color: #e8e8e0;
 }

@@ -7,11 +7,13 @@ var Database = function(callback){
     this.db = openDatabase("accountInfo", "1.0", "User Account Info", 20000);
     this.db.transaction(function(tx){
         tx.executeSql("CREATE TABLE IF NOT EXISTS users (email, pass, defaultAccount boolean)");
-        tx.executeSql("CREATE TABLE IF NOT EXISTS addresses (id AUTO_INCREMENT PRIMARY_KEY, place, defaultAddress boolean, user)");
+        tx.executeSql("CREATE TABLE IF NOT EXISTS addresses (id AUTO_INCREMENT PRIMARY_KEY, street, street2, city, zip, state, phone, nick, defaultAddress boolean, user)");
     }, this.databaseError, callback);
 	
 	this.storeAccount = function(email, pass, defaultAccount){
+    console.log("Storing account", email, pass, defaultAccount);
 		this.db.transaction(function(tx){
+      console.log("perfroming sql query");
 			tx.executeSql("INSERT INTO users (email, pass, defaultAccount) VALUES (?, ?, ?)", [email, pass, defaultAccount], function(tx, results){
 				console.log(tx, results);
 			}, this.databaseError);
@@ -40,15 +42,15 @@ var Database = function(callback){
 		}, this.databaseError);
 	};
 	
-	this.storeAddress = function(place, defaultAddress, user, callback){
+	this.storeAddress = function(street, street2, city, zip, state, phone, nick, defaultAddress, user, callback){
 		this.db.transaction(function(tx){
-			tx.executeSql("INSERT INTO addresses (place, defaultAddress, user) VALUES (?, ?)", [JSON.stringify(place), defaultAddress, user]);
+			tx.executeSql("INSERT INTO addresses (street, street2, city, zip, state, phone, nick, defaultAddress, user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [street, street2, city, zip, state,  phone, nick,  defaultAddress, user]);
 		}, this.databaseError, callback);
 	};
 	
-	this.getDefaultAddress = function(callback){
+	this.getDefaultAddress = function(email, callback){
 		this.db.transaction(function(tx){
-			tx.executeSql("SELECT * FROM addresses WHERE defaultAccount = 'true'", [], callback, this.databaseError);
+			tx.executeSql("SELECT * FROM addresses WHERE defaultAddress = 'true' AND user = ?", [email], callback, this.databaseError);
 		}, this.databaseError);
 	};
 	

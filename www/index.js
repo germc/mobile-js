@@ -1,26 +1,26 @@
 /**
  * TODO:
  * 		 encapsulate the code? Something needs to be done to make it less messy. Maybe just move the handlers into their own functions, possible in seperate files
+ * things should be a little better now that loginUser createUser and createAddress are in a seperate file. Something still needs to be done to make things cleaner though.
  * 		 Save user account (use phonegap for local data storage)
  * 		 Save previous address (use phonegap for local data storage)
  * 		 Switch to opening dialogs with new functions
- 			 GPS
  */
 // application globals
-var delList, storage, db, currMenu, currRest, currItem, place;
+var delList, storage, db, currMenu, currRest, currItem, place, tray = [];
 var currUser = {
 	email: "",
 	pass: ""
 }
 //$(document).bind("deviceready", function(){
 $(window).load(function(){
-    console.log("ready");
-	//storage = window.localStorage; // currently all saved user preferences are saved here. We may switch to a full blown database if this gets too unwieldy
 	db = new Database(function(){
 		db.getDefaultAccount(function(tx, results){
 			if (results.rows.length == 0){
-				//openDialog("body", "createAddress", "pop");
+        // first launch so create a new guest user and then get their location and create the new address
 				$.mobile.pageLoading();
+        db.storeAccount("guest", "", "true");
+        currUser.email = "guest";
 				navigator.geolocation.getCurrentPosition(function(position){
 					// got the users position so perform a reverse geolocation request to get their address
 					// use google maps api for now
@@ -32,8 +32,7 @@ $(window).load(function(){
 								$("#createAddressHeader").html("Is this Where You Are?");
 								$("#createAddressSub").html("Please fill in the blanks");
 								$.mobile.changePage("#createAddress");
-								var streetAddr = false;
-								for (var i in results[1].address_components){
+								var streetAddr = false; for (var i in results[1].address_components){
 									for (var j = 0; j < results[1].address_components[i].types.length; j++){
 										switch(results[1].address_components[i].types[j]){
 											case "street_number":
@@ -68,60 +67,21 @@ $(window).load(function(){
 					//$("#createAddressAddress").focus();
 				});
 			}else{
-				Ordrin.u.setCurrAcct(results.rows.item(0).email, results.rows.item(0).pass);
+        if (results.rows.item(0).email != "guest")
+				  Ordrin.u.setCurrAcct(results.rows.item(0).email, results.rows.item(0).pass);
+        currUser.email = results.rows.item(0).email;
+        currUser.pass  = results.rows.item(0).pass;
 				getAddresses(true);
 			}
 		});
 	});
-	Ordrin.initialize("shds1d6c4BGDGs8", "http://nn2.deasil.com"); // for now this will be deasil
+	Ordrin.initialize("348482827700", "http://nn2.deasil.com"); // for now this will be deasil
 	
      $("#restaurantSelectorParent").removeClass("ui-btn ui-btn-corner-all ui-shadow ui-btn-up-a");
      $("#restaurantSelectorParent>.ui-btn-inner").removeClass("ui-btn-inner");
-	 $("#login_btn").click(function(){
-		currUser.email = $("#loginEmail").val();
-		currUser.pass  = $("#loginPassword").val();
-		$.mobile.pageLoading();
-		Ordrin.u.setCurrAcct(currUser.email, currUser.pass);
-		try{
-			Ordrin.u.getAcct(function(data){
-				data = JSON.parse(data);
-				if (data._error != undefined && data._error != 0){
-					error(data.msg);
-				}else{
-					$("#createAccount").append("<a href = '#restaurant' data-rel = 'back' id = 'removeMe'></a>");
-					$("#removeMe").click().remove();
-					getAddresses(true);
-					storeUser(currUser.email, currUser.pass, true);
-				}
-					
-			}, function(status){
-				console.log("error");
-				if (status == 401){
-					error("Username and/or password are incorrect")
-				}
-			});
-		}catch(e){
-			error(e);
-		}
-	});
+	 $("#login_btn").click(loginUser);
 	
-	$("#postAccount_btn").click(function(){
-		currUser.email = $("#createEmail").val();
-		currUser.pass  = $("#createPassword").val();
-		$.mobile.pageLoading();
-		Ordrin.u.makeAcct(currUser.email, currUser.pass, $("#createFirstName").val(), $("#createLastName").val(), function(data){
-			data = JSON.parse(data);
-			$.mobile.pageLoading(true);
-			if (data._error != undefined && data._error != 0){
-				error(data.msg)
-			}else{
-				$("#createAccount").append("<a href = '#restaurant' id = 'removeMe'></a>");
-				$("#removeMe").click().remove();
-				Ordrin.u.setCurrAcct(currUser.email, currUser.pass);
-				getAddresses(true);
-			}
-		});
-	});
+	$("#postAccount_btn").click(createAccount);
 	// handle the user switching the type of restaurant
 	$("#restaurantTypes_selector").change(function(){
 		var currentSelector = $("#restaurantTypes_selector").val();
@@ -140,24 +100,7 @@ $(window).load(function(){
 			}
 		}
 	});
-	$("#createAddress_btn").click(function(){
-		/*var place = new Address($("#createAddressAddress").val(), $("#createAddressAddress2").val(), $("#createAddressCity").val(), $("#createAddressZip").val(), $("#createAddressState").val(), $("#createAddressPhone").val(), $("#createAddressName").val());
-		Ordrin.u.updateAddress(place, function(data){
-			data = JSON.parse(data);
-			if (data._error != undefined && data._error != 0){
-				error(data.msg);
-			}else{
-				$("#createAddress").append("<a href = '#restaurant' id = 'removeMe'></a>");
-				$("#removeMe").click().remove();
-				getRestaurantList(place, "ASAP");
-			}
-		}, function (status){
-			error("Unable to get addresses.")
-		});*/
-		place = new Address($("#createAddressAddress").val(), $("#createAddressAddress2").val(), $("#createAddressCity").val(), $("#createAddressZip").val(), $("#createAddressState").val(), $("#createAddressPhone").val(), $("#createAddressName").val());
-		$.mobile.changePage("#restaurant", "slideup");
-		getRestaurantList(place, "ASAP");
-	});
+	$("#createAddress_btn").click(createAddress);
 	// hack to make sure that previously clicked user buttons get unclicked
 	$("#restaurant").bind("pagebeforeshow", function(){
 		$(".ui-btn-active").removeClass("ui-btn-active");
@@ -187,7 +130,7 @@ function getAddresses(default_bool){
 									var place = new Address(data[0].addr, data[0].addr2, data[0].city, data[0].zip, data[0].state, data[0].phone, data[0].nick);
 									 var time = new Date();
 									 time.setASAP();
-									 storage.setItem("address", JSON.stringify(place));
+									 //storage.setItem("address", JSON.stringify(place));
 									 getRestaurantList(place, time);
 							 }else{ // the user has more than 1 address so open a dialog to let them choose which address to use and the get the restaurant list. Possibly save their choice?
 									 openDialog("body", "selectAddress", "slidedown");
@@ -202,11 +145,16 @@ function getAddresses(default_bool){
 					});
 
 			 }else{
-					
+         // the user has a default address so move on to restaurants
+         var item = results.rows.item(0);
+         var place = new Address(item.street, item.street2, item.city, item.zip, item.state, item.phone, "");
+         var time  = new Date();
+         time.setASAP();
+         getRestaurantList(place, time, false);
 			 }
 		});
 	}
-	if (storedAddress == null){
+/*	if (storedAddress == null){
 		Ordrin.u.getAddress("", function(data){
 			if (data == "[]"){ // the user has no addresses so push the create address dialog
 				console.log("data");
@@ -236,7 +184,7 @@ function getAddresses(default_bool){
 		time.setASAP();
 		var place = new Address(storedAddress.street, storedAddress.street2, storedAddress.city, storedAddress.zip, storedAddress.state, storedAddress.phone, storedAddress.nick);
 		getRestaurantList(place, time);
-	}
+	}*/
 }
 
 function addressSelected(place, time){
@@ -249,7 +197,7 @@ function openDialog(parent, name, transition){
 	$("#removeMe").click().remove();
 }
 
-function getRestaurantList(place, time){
+function getRestaurantList(place, time, storePlace){
 	if (time == "ASAP"){
 		time = new Date();
 		time.setASAP();
@@ -281,6 +229,10 @@ function getRestaurantList(place, time){
 		}
 		$("#restaurantTypes_selector").selectmenu('refresh', true);
 	})
+  if (storePlace){
+    db.storeAddress(place.street, place.street2, place.city, place.zip, place.state, place.phone, place.nice,
+                    "true", "guest", function(){});
+  }
 }
 
 
@@ -293,7 +245,7 @@ function storeUser(email, pass, defaultAccount){
 function getRestDetails(index){
     console.log("called");
 	$.mobile.pageLoading();
-	var currRest = delList[index];
+	currRest = delList[index];
 	currRest = delList[index];
 	Ordrin.r.details(currRest.id, function(data){
 		data = JSON.parse(data);
@@ -308,7 +260,7 @@ function getRestDetails(index){
 		$("#menu").html('');
 		$("#menuListTemplate").tmpl(data.menu).appendTo("#menu");
 		$.mobile.changePage("#restDetails");
-		curRest = data;
+		currRest = data;
 		$("#menu").listview('refresh');
 	});
 }
@@ -329,6 +281,7 @@ function deactivateButtons(){
 }
 
 function populateExtras(index){
+//  currMenu = index;
 	for (var i = 0; i < currRest.menu[currMenu].children.length; i++) {
 		if (currRest.menu[currMenu].children[i].id == index) {
 			currItem = currRest.menu[currMenu].children[i];
@@ -337,7 +290,28 @@ function populateExtras(index){
 	}
 	console.log(currItem);
 	if (currItem.children) {
-		$("#extrasForm").html('');
+/*		//		$(list).page();
+This is going to be used later with some minor changes
+*/
+    $("#itemName").html(currItem.name);
+    $("#itemDescrip").html(currItem.descrip);
+    $("#extrasList").empty();
+    for (i = 0; i < currItem.children.length; i++){
+      $.tmpl("<li class='ui-btn ui-btn-icon-right' onclick='createExtrasPage(\"${index}\");'>${name}<span class=\"ui-icon ui-icon-arrow-r\"></span></li>", 
+             {name: currItem.children[i].name, index: i}).appendTo("#extrasList");
+    }
+		$.mobile.changePage("#extrasOverview");
+    $("#extrasOverview").page();
+		//$("#extrasList").listview("refresh");
+    $("#extrasList").listview("refresh");
+	}else{
+    tray.push(currItem);
+    $.mobile.changePage("#restDetails", {reverse: true});
+  }
+}
+
+function createExtrasPage(){
+  $("#extrasForm").html('');
 		var list = $('<ul>', {
 			"data-role": "listview",
 			"id": "extrasList"
@@ -345,10 +319,6 @@ function populateExtras(index){
 		$("#extrasHeader").html(currItem.name);
 		$("#extrasTemplate").tmpl(currItem.children).appendTo(list);
 		$("#extrasForm").append(list);
-		$(list).page();
-		$.mobile.changePage("#menuExtras");
-		//$("#extrasList").listview("refresh");
-	}	
 }
 
 function validateForm() {

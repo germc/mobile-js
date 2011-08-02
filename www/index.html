@@ -17,19 +17,22 @@
 <!-- Jquery Mobile -->
 <script type="text/javascript" src="script/jquery.js"></script>
 <script src="script/jquery.tmpl.js"></script>
-<script type = "text/javascript" charset="utf-8" src = "jquery/jquery.mobile-1.0b1.js"></script>
-<link rel = "stylesheet" href = "jquery/jquery.mobile-1.0b1.min.css" />
+<script type="text/javascript" charset="utf-8" src="jquery/jquery.mobile-1.0b1.js"></script>
+<link rel="stylesheet" href="jquery/jquery.mobile-1.0b1.min.css" />
 <!-- Google Maps API -->
-<script src = "script/maps.js" type = "text/javascript"></script>
+<script src= "script/maps.js" type="text/javascript"></script>
 <!-- Application logic -->
-<script type = "text/javascript" charset="utf-8" src = "index.js"></script>
-<script type = "text/javascript" charset="utf-8" src = "script/database.js"></script>
+<script type="text/javascript" charset="utf-8" src="handlers.js"></script>
+<script type="text/javascript" charset="utf-8" src='index.js'></script>
+<script type="text/javascript" charset="utf-8" src="script/database.js"></script>
 <!-- iPhone theme -->
-<link rel = 'stylesheet' href = 'css/styles.css' />
-<link rel = "stylesheet" href = "css/main.css" />
-<script id="restListTemplate" type="text/x-jquery-tmpl"> 
-    <li class = 'restaurantListItem' id = 'restaurant${index}'>
-    <span onclick="getRestDetails('${index}')" class = "ui-link-inherit" style = 'width: 85%'>
+<link rel='stylesheet' href='css/styles.css' />
+<link rel="stylesheet" href="css/main.css" />
+
+<!-- templates for rendering dynamic ajax content -->
+<script id="restListTemplate" type="text/x-jquery-tmpl">
+  <li class = 'restaurantListItem ui-btn ui-btn-icon-right' id = 'restaurant${index}'>
+    <span onclick="getRestDetails('${index}')" class = "ui-link-inherit " style = 'width: 85%'>
 			<h3 style="width:75%; white-space:normal">${na}</h3>
 			<p class = 'cuisineList'>${cuisines}</p>
 			<p>${ad}</p>
@@ -39,19 +42,27 @@
 				<p>Not Delivering</p>
 			{{/if}}
 		</span>
-    </li>
+    <span class="ui-icon ui-icon-arrow-r"></span>
+  </li>
 </script>
 <script id="menuListTemplate" type="text/x-jquery-tmpl">
-	<li onclick="setCurrMenu('${index}')>
-		<b>${name}</b>
-		<ul data-inset = "true">
+	<li class='ui-btn ui-btn-icon-right' onclick="setCurrMenu('${index}')">
+		<b>${name}
+      <a href = "#" data-rel = 'back' data-icon="arrow-l">Restaurants</a>
+    </b>
+		<ul class = 'foodItems'>
+		<li class = 'typeInfo typeItem'>
+			<span class='typeName'>${name}</span> <br />
+			<span class="typeDescrip">${descrip}</span>
+		</li>
 		{{each children}}
-			<li onclick="populateExtras('${id}')">
+			<li class = 'typeItem ui-btn ui-btn-icon-right' onclick="populateExtras('${id}')">
 				<div style="width:80%; white-space:normal">
 					<h3>${name}</h3>
 					<p style="white-space: normal;">${descrip}</p>
 				</div>
-				<p class="ui-li-aside" style="flat:right; padding-top:8px; width: 20%;">$ ${price}</p>
+				<p class="ui-li-aside" style="float:right; padding-top:8px; width: 20%;">$${price}</p>
+				<span class="ui-icon ui-icon-arrow-r"></span>
 			</li>
 			{{/each}}
 		</ul>
@@ -172,8 +183,8 @@
 
 	<div data-id = 'header' data-add-back-btn="true" id="restDetails" data-role="page">
 		<div data-id = 'header' data-role="header">
-			<a href = "#" data-rel = 'back' data-icon="arrow-l">Restaurants</a>
-			<h1 class="restName"></h1>
+		  <h1 class="restName"></h1>
+      <a href = "#" data-rel = 'back' data-icon="arrow-l">Restaurants</a>
 		</div>
 		<div style="padding-top: 0" data-role="content">
 			<div id = 'restaurantInfo'>
@@ -187,8 +198,8 @@
 			</div>
 			<div style = "clear: both;"></div>
 			<div id = 'menuHeader'>Menu Sections</div>
-			<li data-role="listview" id="menu">
-			</li>
+			<ul data-role="listview" id="menu">
+			</ul>
 		</div>
 		<div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
 			<div data-role = "navbar" class = "mainFooter">
@@ -217,6 +228,20 @@
 			</ul>
 		</div>
 	</div>
+  <div data-role="page" id="extrasOverview">
+    <div data-role="header">
+      <h1>Item</h1>
+      <a href = "#" data-rel = 'back' data-icon="arrow-l">Items</a>
+    </div>
+    <div data-role="content">
+      <p id = 'itemInfo'>
+        <div id="itemName"></div>
+        <div id="itemDescrip"></div>
+      </p>
+      <ul id="extrasList" data-role='listview' data-inset="true">
+      </ul>
+      <div id="quantityPicker">Put a quantity picker here</div>
+  </div>
 	<div data-role="page" id="menuExtras">
 		<div data-role = "header"><h1 id="extrasHeader"></h1></div>
 		<div data-role = "content" id="extraContent">
