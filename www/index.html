@@ -239,11 +239,17 @@
       <ul id="extrasList" data-role='listview' data-inset="true">
       </ul>
       <div id="quantityPicker">Put a quantity picker here</div>
+    </div>
   </div>
 	<div data-role="page" id="menuExtras">
-		<div data-role = "header"><h1 id="extrasHeader"></h1></div>
+		<div data-role = "header">
+      <h1 id="extrasHeader">Options</h1>
+      <a href="#" data-rel="back" data-icon="arrow-l">Item</a>
+    </div>
 		<div data-role = "content" id="extraContent">
 			<form id="extrasForm">
+        <ul data-role='listview' id='optionsList'>
+        </ul>
 			</form>
 			<br />
 			<input type="button" id="submitExtras" value="Ok" onclick="validateForm();" />

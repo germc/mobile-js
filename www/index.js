@@ -76,9 +76,8 @@ $(window).load(function(){
 		});
 	});
 	Ordrin.initialize("348482827700", "http://nn2.deasil.com"); // for now this will be deasil
-	
-     $("#restaurantSelectorParent").removeClass("ui-btn ui-btn-corner-all ui-shadow ui-btn-up-a");
-     $("#restaurantSelectorParent>.ui-btn-inner").removeClass("ui-btn-inner");
+   $("#restaurantSelectorParent").removeClass("ui-btn ui-btn-corner-all ui-shadow ui-btn-up-a");
+   $("#restaurantSelectorParent>.ui-btn-inner").removeClass("ui-btn-inner");
 	 $("#login_btn").click(loginUser);
 	
 	$("#postAccount_btn").click(createAccount);
@@ -246,7 +245,6 @@ function getRestDetails(index){
     console.log("called");
 	$.mobile.pageLoading();
 	currRest = delList[index];
-	currRest = delList[index];
 	Ordrin.r.details(currRest.id, function(data){
 		data = JSON.parse(data);
 		for(var i = 0; i < data.menu.length; i++) {
@@ -261,12 +259,19 @@ function getRestDetails(index){
 		$("#menuListTemplate").tmpl(data.menu).appendTo("#menu");
 		$.mobile.changePage("#restDetails");
 		currRest = data;
-		$("#menu").listview('refresh');
+	//	$("#menu").listview('refresh');
 	});
 }
 
 function setCurrMenu(index) {
 	currMenu = index;
+  var currPage = currRest.menu.length - index - 1;
+  if ($('div[data-url="restDetails&ui-page=menu-' + currPage + '"]>div>a').length == 0){
+    $('div[data-url="restDetails&ui-page=menu-' + currPage + '"]>div').filter(":first").prepend("<a href='#'  data-rel='back' data-icon='arrow-l'>Menu</a>");
+    $('div[data-url="restDetails&ui-page=menu-' + currPage + '"]').bind("pagebeforeshow", function(){
+      $('div[data-url="restDetails&ui-page=menu-' + currPage + '"]>div').filter(":first").page();
+    });
+  }
 }
 
 
@@ -303,22 +308,18 @@ This is going to be used later with some minor changes
 		$.mobile.changePage("#extrasOverview");
     $("#extrasOverview").page();
 		//$("#extrasList").listview("refresh");
-    $("#extrasList").listview("refresh");
 	}else{
     tray.push(currItem);
     $.mobile.changePage("#restDetails", {reverse: true});
   }
 }
 
-function createExtrasPage(){
-  $("#extrasForm").html('');
-		var list = $('<ul>', {
-			"data-role": "listview",
-			"id": "extrasList"
-		});
-		$("#extrasHeader").html(currItem.name);
-		$("#extrasTemplate").tmpl(currItem.children).appendTo(list);
-		$("#extrasForm").append(list);
+function createExtrasPage(index){
+    var list = $("#optionsList");
+    list.html("");
+    $("#extrasHeader").html(currItem.name);
+		$("#extrasTemplate").tmpl(currItem.children[index]).appendTo(list);
+    $.mobile.changePage("#menuExtras");
 }
 
 function validateForm() {
