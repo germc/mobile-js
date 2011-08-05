@@ -7,13 +7,14 @@
  * 		 Switch to opening dialogs with new functions
  */
 // application globals
-var delList, storage, db, currMenu, currRest, currItem, place, tray = [];
+var delList, storage, db, currMenu, currRest, currItem, currExtra, place, tray = [];
 var currUser = {
 	email: "",
 	pass: ""
 }
 //$(document).bind("deviceready", function(){
 $(window).load(function(){
+  $.mobile.page.prototype.options.addBackBtn = true;
 	db = new Database(function(){
 		db.getDefaultAccount(function(tx, results){
 			if (results.rows.length == 0){
@@ -76,6 +77,13 @@ $(window).load(function(){
 		});
 	});
 	Ordrin.initialize("348482827700", "http://nn2.deasil.com"); // for now this will be deasil
+  /*$("#extrasOverview").bind("pagebeforeshow pageshow", function(){
+    $("#extrasList").listview("refresh");
+  });*/
+  $("#menuExtras").bind("pagebeforeshow", function(){
+    $("#optionsList").listview("refresh");
+  });
+
    $("#restaurantSelectorParent").removeClass("ui-btn ui-btn-corner-all ui-shadow ui-btn-up-a");
    $("#restaurantSelectorParent>.ui-btn-inner").removeClass("ui-btn-inner");
 	 $("#login_btn").click(loginUser);
@@ -99,17 +107,36 @@ $(window).load(function(){
 			}
 		}
 	});
+  $("#restDetails").live("pageshow", function(){
+    if (currRest.id != undefined){
+      $.mobile.pageLoading();
+      Ordrin.r.details(currRest.id, function(data){
+          data = JSON.parse(data);
+        for(var i = 0; i < data.menu.length; i++) {
+          data.menu[i].index = i;
+        }
+        $(".restName").html(data.name);
+        $("#cuisineList").html(data.cuisines);
+        $("#rAddress").html(data.addr + " " + data.city + ", " + data.state + " " + data.postal_code);
+        $("#minimumDelivery").html("$" + currRest.mino);
+        $("#estimatedDelivery").html(currRest.del ? currRest.del : "0" + " minutes");
+        $("#menuListTemplate").tmpl(data.menu).appendTo("#menu");
+
+        currRest = data;
+        $("#menu").listview('refresh');
+        $(".typeMenu").unbind();
+        $(".typeItem").unbind();
+        $(".typeMenu").bind("tap", setCurrMenu);
+        $(".typeItem").click(populateExtras);
+        $.mobile.pageLoading(true);
+      });
+    }
+  });
+  $(".optionBox").live("click", function(){
+    var id = this.id.replace("option", "");
+    $(this).children("img").toggleClass("hidden");
+  });
 	$("#createAddress_btn").click(createAddress);
-	// hack to make sure that previously clicked user buttons get unclicked
-	$("#restaurant").bind("pagebeforeshow", function(){
-		$(".ui-btn-active").removeClass("ui-btn-active");
-	});
-	$("#restDetails").bind("pagebeforeshow",function(){
-		$(".ui-btn-active").removeClass("ui-btn-active");
-	});
-	// populate settings screen
-	$("#settings").bind("pageshow", function(){
-	});
 });
 
 function getAddresses(default_bool){
@@ -236,116 +263,126 @@ function getRestaurantList(place, time, storePlace){
 
 
 function storeUser(email, pass, defaultAccount){
-	//storage.setItem("user", JSON.stringify({email: email, pass: pass}));
 	db.storeAccount(email, pass, defaultAccount);
 }
 
 
 function getRestDetails(index){
-    console.log("called");
 	$.mobile.pageLoading();
 	currRest = delList[index];
-	Ordrin.r.details(currRest.id, function(data){
-		data = JSON.parse(data);
-		for(var i = 0; i < data.menu.length; i++) {
-			data.menu[i].index = i;
-		}
-		$(".restName").html(data.name);
-		$("#cuisineList").html(data.cuisines);
-		$("#rAddress").html(data.addr + " " + data.city + ", " + data.state + " " + data.postal_code);
-		$("#minimumDelivery").html("$" + currRest.mino);
-		$("#estimatedDelivery").html(currRest.del ? currRest.del : "0" + " minutes");
-		$("#menu").html('');
-		$("#menuListTemplate").tmpl(data.menu).appendTo("#menu");
-		$.mobile.changePage("#restDetails");
-		currRest = data;
-	//	$("#menu").listview('refresh');
-	});
+  $.mobile.changePage("rest_details.html");
 }
 
-function setCurrMenu(index) {
+function setCurrMenu() {
+  console.log("clicked anchor");
+  var index = parseInt(this.id.replace("menu", ""));
 	currMenu = index;
-  var currPage = currRest.menu.length - index - 1;
-  if ($('div[data-url="restDetails&ui-page=menu-' + currPage + '"]>div>a').length == 0){
-    $('div[data-url="restDetails&ui-page=menu-' + currPage + '"]>div').filter(":first").prepend("<a href='#'  data-rel='back' data-icon='arrow-l'>Menu</a>");
-    $('div[data-url="restDetails&ui-page=menu-' + currPage + '"]').bind("pagebeforeshow", function(){
-      $('div[data-url="restDetails&ui-page=menu-' + currPage + '"]>div').filter(":first").page();
-    });
-  }
+  setTimeout(function(){
+    if ($.mobile.activePage.children("div").filter(":first").children("a").length == 0){
+        $.mobile.activePage.children("div").filter(":first").append("<a href='rest_details.html' data-rel='back' data-icon='arrow-l'>Menu</a>");
+        $.mobile.activePage.children("div").filter(":first").filter(":first").page();
+      };
+  }, 500);
 }
 
-
-function error(msg){
+function error(msg, title, btnName){ //TODO come up with a better way to display errors
 	$.mobile.pageLoading(true);
-	$("body").append("<a href = '#error' data-rel = 'dialog' id = 'removeMe'></a>");
+	/*$("body").append("<a href = '#error' data-rel = 'dialog' id = 'removeMe'></a>");
 	$("#removeMe").click().remove();
-	$("#errorMsg").html(msg);
+	$("#errorMsg").html(msg);*/
+  navigator.notification.alert(msg, null, title, btnName);
 }
 function deactivateButtons(){
 	$(".ui-btn-active").removeClass("ui-btn-active");
+  $(".ui-btn-active").removeClass("ui-btn-active");
 }
 
-function populateExtras(index){
-//  currMenu = index;
+function populateExtras(){
+  var index = parseInt(this.id.replace("item", ""));
 	for (var i = 0; i < currRest.menu[currMenu].children.length; i++) {
 		if (currRest.menu[currMenu].children[i].id == index) {
 			currItem = currRest.menu[currMenu].children[i];
 			break;
 		}
 	}
-	console.log(currItem);
+  if (!currItem.extras)
+    currItem.extras = {};
 	if (currItem.children) {
-/*		//		$(list).page();
-This is going to be used later with some minor changes
-*/
     $("#itemName").html(currItem.name);
     $("#itemDescrip").html(currItem.descrip);
     $("#extrasList").empty();
     for (i = 0; i < currItem.children.length; i++){
-      $.tmpl("<li class='ui-btn ui-btn-icon-right' onclick='createExtrasPage(\"${index}\");'>${name}<span class=\"ui-icon ui-icon-arrow-r\"></span></li>", 
-             {name: currItem.children[i].name, index: i}).appendTo("#extrasList");
+      if (!currItem.extras[currItem.children[i].name]){
+        currItem.extras[currItem.children[i].id] = [];
+      }
+      $.tmpl("<li class='ui-btn ui-btn-icon-right' id='extra${id}' onclick='createExtrasPage(\"${index}\");'>${name}<div class='optionsList'></div><span class=\"ui-icon ui-icon-arrow-r\"></span></li>", 
+             {name: currItem.children[i].name, index: i, id: currItem.children[i].id}).appendTo("#extrasList");
     }
-		$.mobile.changePage("#extrasOverview");
-    $("#extrasOverview").page();
-		//$("#extrasList").listview("refresh");
+		$.mobile.changePage("index.html#extrasOverview");
+		$("#extrasList").listview("refresh");
 	}else{
     tray.push(currItem);
-    $.mobile.changePage("#restDetails", {reverse: true});
+    $.mobile.changePage("rest_details.html", {reverse: true});
   }
 }
 
 function createExtrasPage(index){
-    var list = $("#optionsList");
-    list.html("");
+    currExtra = currItem.children[index];
+    var list = $("#optionsList"), checked = {};
+    list.empty();
     $("#extrasHeader").html(currItem.name);
-		$("#extrasTemplate").tmpl(currItem.children[index]).appendTo(list);
+    for (var i = 0; i < currItem.extras[currExtra.id].length; i++){
+      checked[currItem.extras[currExtra.id][i].id] = true;
+    }  
+    for (i = 0; i < currItem.children[index].children.length; i++){
+      var node = currItem.children[index].children[i];
+      if (node.price == 0)
+         node.displayPrice  = "";
+      else
+          node.displayPrice = "+$" + node.price;
+      if (checked[node.id])
+         node.checked = "";
+      else
+         node.checked = "hidden";
+    }
+    $(".optionsTitle").html(currItem.children[index].name);
+		$("#extrasTemplate").tmpl(currItem.children[index].children).appendTo(list);
     $.mobile.changePage("#menuExtras");
 }
 
 function validateForm() {
-	var object = serializeObject($("#extrasForm"));
-	var errors = []
-	console.log(object);
-	$.each(currItem.children, function() {
-		console.log(this);
-		var min = this.min_child_select,
-			max = this.max_child_select,
-			min_id = this.children[0].id,
-			max_id = this.children[this.children.length-1].id,
-			totalExtras =0;
-		if(!min && !max) return;
-		for(var i = min_id; i<=max_id; i++) {
-			if(object[i]) {totalExtras++;}
-		}
-		if(min && totalExtras < min) {
-			errors.push('You must select at least ' + min + ' extras');
-		}
-		if (max && totalExtras > max) {
-			errors.push('You can not select more than ' + max + ' extras');
-		}
-		//totalExtras....
-	});
-	console.log(errors);
+  var min         = currExtra.min_child_select,
+      max         = currExtra.max_child_select,
+      totalExtras = 0;
+  if(!min && !max) return;
+  currItem.extras[currExtra.id] = [];
+  $("#extra" + currExtra.id + " .optionsList").html("");
+  for (var i = 0; i < currExtra.children.length; i++){
+//    if (object[currExtra.children[i].id]){
+    if (!$($("#optionsList").children()[i]).children("img").hasClass("hidden")){
+      currItem.extras[currExtra.id].push(currExtra.children[i]);
+      $("#extra" + currExtra.id + " .optionsList").append(currExtra.children[i].name + ", ");
+      totalExtras++;
+    }
+  }
+  $("#extra" + currExtra.id + " .optionsList").html($("#extra" + currExtra.id + " .optionsList").html().replace(/,(?!.*,)/, ""));
+  if(min && totalExtras < min) {
+    error('You must select at least ' + min + ' extras');
+    currItem.extras[currExtra.id] = [];
+    return;
+  }
+  if (max && totalExtras > max) {
+    error('You can not select more than ' + max + ' extras');
+    currItem.extras[currExtra.id] = [];
+    return;
+  }
+  history.back();
+}
+
+function addCurrItemToTray(){
+  currItem.quantity = $("#extrasQuantity").val();
+  tray.push(currItem);
+  $.mobile.changePage("rest_details.html", {reverse: "true"}); 
 }
 
 function serializeObject(form) {

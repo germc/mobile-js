@@ -77,3 +77,10 @@ function loginUser(){
 			error(e);
 		}
 }
+function increaseQuantity(){
+  $("#extrasQuantity").val(parseInt($("#extrasQuantity").val()) + 1);
+}
+function decreaseQuantity(){
+  if ($("#extrasQuantity").val() > 1)
+    $("#extrasQuantity").val(parseInt($("#extrasQuantity").val()) - 1);
+}
