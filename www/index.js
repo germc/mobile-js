@@ -7,7 +7,10 @@
  * 		 Switch to opening dialogs with new functions
  */
 // application globals
-var delList, storage, db, currMenu, currRest, currItem, currExtra, place, tray = [];
+var delList, storage, db, currMenu, currRest, currItem, currExtra, place, tray = {
+  items: [],
+  count: 0
+};
 var currUser = {
 	email: "",
 	pass: ""
@@ -107,31 +110,6 @@ $(window).load(function(){
 			}
 		}
 	});
-  $("#restDetails").live("pageshow", function(){
-    if (currRest.id != undefined){
-      $.mobile.pageLoading();
-      Ordrin.r.details(currRest.id, function(data){
-          data = JSON.parse(data);
-        for(var i = 0; i < data.menu.length; i++) {
-          data.menu[i].index = i;
-        }
-        $(".restName").html(data.name);
-        $("#cuisineList").html(data.cuisines);
-        $("#rAddress").html(data.addr + " " + data.city + ", " + data.state + " " + data.postal_code);
-        $("#minimumDelivery").html("$" + currRest.mino);
-        $("#estimatedDelivery").html(currRest.del ? currRest.del : "0" + " minutes");
-        $("#menuListTemplate").tmpl(data.menu).appendTo("#menu");
-
-        currRest = data;
-        $("#menu").listview('refresh');
-        $(".typeMenu").unbind();
-        $(".typeItem").unbind();
-        $(".typeMenu").bind("tap", setCurrMenu);
-        $(".typeItem").click(populateExtras);
-        $.mobile.pageLoading(true);
-      });
-    }
-  });
   $(".optionBox").live("click", function(){
     var id = this.id.replace("option", "");
     $(this).children("img").toggleClass("hidden");
@@ -268,21 +246,42 @@ function storeUser(email, pass, defaultAccount){
 
 
 function getRestDetails(index){
-	$.mobile.pageLoading();
 	currRest = delList[index];
-  $.mobile.changePage("rest_details.html");
+  $.mobile.pageLoading();
+  Ordrin.r.details(currRest.id, function(data){
+    data = JSON.parse(data);
+    for(var i = 0; i < data.menu.length; i++) {
+      data.menu[i].index = i;
+    }
+    $(".restName").html(data.name);
+    $("#cuisineList").html(data.cuisines);
+    $("#rAddress").html(data.addr + " " + data.city + ", " + data.state + " " + data.postal_code);
+    $("#minimumDelivery").html("$" + currRest.mino);
+    $("#estimatedDelivery").html(currRest.del ? currRest.del : "0" + " minutes");
+    $("#menu").empty();
+    $("#menuListTemplate").tmpl(data.menu).appendTo("#menu");
+
+    currRest = data;
+    $("#menu").listview('refresh');
+    $(".typeMenu").unbind();
+    $(".typeItem").unbind();
+    $(".typeMenu").bind("tap", populateMenuItems);
+    $.mobile.pageLoading(true);
+  });
+
+  $.mobile.changePage("#restDetails");
 }
 
-function setCurrMenu() {
-  console.log("clicked anchor");
+function populateMenuItems() {
   var index = parseInt(this.id.replace("menu", ""));
 	currMenu = index;
-  setTimeout(function(){
-    if ($.mobile.activePage.children("div").filter(":first").children("a").length == 0){
-        $.mobile.activePage.children("div").filter(":first").append("<a href='rest_details.html' data-rel='back' data-icon='arrow-l'>Menu</a>");
-        $.mobile.activePage.children("div").filter(":first").filter(":first").page();
-      };
-  }, 500);
+  $("#menuItemList").empty();
+  $("#menuItemTemplate").tmpl(currRest.menu[currMenu].children).appendTo("#menuItemList");
+  $(".typeName").html(currRest.menu[currMenu].name);
+  $(".typeDescrip").html(currRest.menu[currMenu].descrip);
+  $.mobile.changePage("#menuItems");
+  $(".typeItem").click(populateExtras);
+  $("#menuItemList").listview("refresh");
 }
 
 function error(msg, title, btnName){ //TODO come up with a better way to display errors
@@ -318,11 +317,11 @@ function populateExtras(){
       $.tmpl("<li class='ui-btn ui-btn-icon-right' id='extra${id}' onclick='createExtrasPage(\"${index}\");'>${name}<div class='optionsList'></div><span class=\"ui-icon ui-icon-arrow-r\"></span></li>", 
              {name: currItem.children[i].name, index: i, id: currItem.children[i].id}).appendTo("#extrasList");
     }
-		$.mobile.changePage("index.html#extrasOverview");
+		$.mobile.changePage("#extrasOverview");
 		$("#extrasList").listview("refresh");
 	}else{
-    tray.push(currItem);
-    $.mobile.changePage("rest_details.html", {reverse: true});
+    addCurrItemToTray();
+    $.mobile.changePage("#restDetails", {reverse: true});
   }
 }
 
@@ -381,8 +380,11 @@ function validateForm() {
 
 function addCurrItemToTray(){
   currItem.quantity = $("#extrasQuantity").val();
-  tray.push(currItem);
-  $.mobile.changePage("rest_details.html", {reverse: "true"}); 
+  tray.items.push(currItem);
+  tray.count += parseInt(currItem.quantity);
+  $(".innerCount").html(tray.count);
+  $('.trayCount').show();
+  $.mobile.changePage("#restDetails", {reverse: "true"}); 
 }
 
 function serializeObject(form) {
