@@ -1283,7 +1283,7 @@
 		<string>PrimaryDocumentVisibleCharacterRange</string>
 		<string>HideAllIssues</string>
 		<string>PrimaryDocumentSelectedCharacterRange</string>
-		<real>334273035.49971199</real>
+		<real>334496736.90218699</real>
 		<string>{0, 372}</string>
 		<false/>
 		<string>{369, 0}</string>
@@ -3160,8 +3160,8 @@
 				</dict>
 			</array>
 		</dict>
-		<real>334273035.49564099</real>
-		<string>{10867, 1549}</string>
+		<real>334496736.89919603</real>
+		<string>{10867, 1612}</string>
 		<string>{11867, 7}</string>
 		<string>setCurrMenu</string>
 		<string>index.js</string>
@@ -3196,7 +3196,7 @@
 				</dict>
 			</array>
 		</dict>
-		<string>{{0, 0}, {600, 622}}</string>
+		<string>{{0, 0}, {600, 644}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -4768,8 +4768,8 @@
 				</dict>
 			</array>
 		</dict>
-		<real>334273035.49914801</real>
-		<string>{611, 1796}</string>
+		<real>334496736.90165699</real>
+		<string>{611, 1860}</string>
 		<string>{2048, 0}</string>
 		<string>index.html</string>
 		<string>index.html</string>
@@ -4804,7 +4804,7 @@
 				</dict>
 			</array>
 		</dict>
-		<string>{{0, 0}, {600, 620}}</string>
+		<string>{{0, 0}, {600, 642}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -6921,7 +6921,7 @@
 				</dict>
 			</array>
 		</dict>
-		<real>334273035.49472499</real>
+		<real>334496736.89838701</real>
 		<string>{0, 372}</string>
 		<string>{369, 0}</string>
 		<dict>
@@ -7159,8 +7159,8 @@
 				</dict>
 			</array>
 		</dict>
-		<real>334273035.49486899</real>
-		<string>{10867, 1549}</string>
+		<real>334496736.89854598</real>
+		<string>{10867, 1612}</string>
 		<string>{11867, 7}</string>
 		<dict>
 			<key>$class</key>
@@ -7397,8 +7397,8 @@
 				</dict>
 			</array>
 		</dict>
-		<real>334273035.49481302</real>
-		<string>{611, 1796}</string>
+		<real>334496736.898485</real>
+		<string>{611, 1860}</string>
 		<string>{2048, 0}</string>
 		<dict>
 			<key>$class</key>
@@ -8559,7 +8559,7 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 5:37 PM</string>
+		<string>8/5/11 at 5:37 PM</string>
 		<integer>234</integer>
 		<dict>
 			<key>$class</key>
