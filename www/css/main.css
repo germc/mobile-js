@@ -186,6 +186,33 @@ body{
   color: #FFFFFF;
   text-shadow: none;
 }
+
+.ui-header a{
+  background: transparent url(images/backButtonSprite.png) 0 0 no-repeat !important;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
+  border: 0 none !important;
+  height: 30px;
+}
+.ui-header a .ui-btn-inner{
+  background: transparent url(images/backButtonSprite.png) right 0 no-repeat !important;
+  margin: 0 0 0 15px;
+  padding: 0 8px 0 0 !important;
+  height: 30px;
+  line-height: 30px;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+.ui-header a .ui-btn-inner{
+  line-height: 30px;
+}
+.ui-header a .ui-btn-inner .ui-icon{ 
+  display: none;
+}
 .ui-page, .ui-mobile-viewport{
 	/*background-image: url(../images/bg.png);*/
 	background-color: #f4f4ef;

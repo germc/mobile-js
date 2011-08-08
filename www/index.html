@@ -66,6 +66,14 @@
     <img class="checkmarck ${checked} " src="images/checkbox.png" />
   </li>
 </script>
+<script id='trayItemTemplate' type="text/x-jquery-tmpl">
+  <li id='trayItem${id}' class='trayItem'>
+    <span class='itemName'>${name}</span>
+    <span class='itemDescrip'>${descrip}</span>
+    <p class='extrasList'>${extras_str}</p>
+    <span class='ui-li-count'>${quantity}</span>
+  </li>
+</script>
 </head>
 <body>
 	
@@ -83,7 +91,7 @@
 					<li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
 					<li>
              <div class='circle trayCount'><p class='innerCount'>1</p></div>
-            <a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a>
+             <a href="#" data-transition='flip' onclick='loadTray()'  id = "tray_btn" data-icon = "custom">Your Tray</a>
           </li>
 					<li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
 					<li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
@@ -91,6 +99,16 @@
 			</div>
 		</div>
 	</div>
+
+  <div data-role='page' id='tray'>
+    <div data-role='header'>
+      <h1>Tray</h1>
+    </div>
+    <div data-role='content'>
+      <ul data-role='listview' id='trayList'>
+      </ul>
+    </div> 
+  </div>
 
 	<div data-role = "page" id = "login">
 		<div data-role = "header"><h1>Please Login</h1></div>
@@ -208,7 +226,7 @@
   <div id="restDetails" data-role="page">
 		<div data-id = 'header' data-role="header">
 		  <h1 class="restName"></h1>
-      <a href = "#restaurant" data-rel = 'back' data-icon="arrow-l">Restaurants</a>
+      <a href = "#restaurant"style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Restaurants</a>
 		</div>
 		<div style="padding-top: 0" data-role="content">
 			<div id = 'restaurantInfo'>
@@ -245,7 +263,7 @@
   <div id='menuItems' data-role='page'>
     <div data-role='header'>
       <h1>Items</h1>
-      <a href='rest_details.html' data-rel='back' data-icon='arrow-l'>Menu</a>
+      <a href = "#restDetails" style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Menu</a>
     </div>
     <div data-role='content'>
       <div class = 'typeInfo typeItem'>
