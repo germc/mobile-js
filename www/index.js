@@ -10,7 +10,8 @@
 // application globals
 var delList, storage, db, currMenu, currRest, currItem, currExtra, place, tray = {
   items: [],
-  count: 0
+  count: 0,
+  price: 0.00
 }, time;
 var currUser = {
 	email: "",
@@ -424,15 +425,27 @@ function validateForm() {
 }
 
 function addCurrItemToTray(){
+  calculateItemPrice(currItem);
   currItem.quantity = $("#extrasQuantity").val();
   tray.items.push(currItem);
+  tray.price += parseFloat(currItem.price);
   tray.count += parseInt(currItem.quantity);
   $(".innerCount").html(tray.count);
   $('.trayCount').show();
   $.mobile.changePage("#restDetails", {reverse: "true"}); 
 }
 
+function calculateItemPrice(item){
+  item.price = parseFloat(item.price); // make sure the price is a number and not a string.
+  for (var i in item.extras){
+    for (var j = 0; j < item.extras[i].length; j++){
+      item.price += parseFloat(item.extras[i][j].price);
+    }
+  }
+}
+
 function loadTray(){
+  var tip = 0;
   $("#trayList").empty();
   for (var i = 0; i < tray.items.length; i++){
     tray.items[i].index = i;
@@ -440,6 +453,15 @@ function loadTray(){
   $("#trayItemTemplate").tmpl(tray.items).appendTo("#trayList");
   $.mobile.changePage("#tray", {
     transition: "flip"
+  });
+  tip = (tray.price * .2).toFixed(2); //set the initial tip to 20% of the price.
+  $("#tip").val(tip);
+  Ordrin.r.deliveryFee(currRest.restaurant_id, new Money(tray.price), new Money(tip), time, place, function(data){
+    data = JSON.parse(data);
+    $("#traySubtotal").html("$" + tray.price);
+    $("#trayFee").html("$" + data.fee);
+    $("#trayTax").html("$" + data.tax);
+    $("#trayTotal").html("$" + (parseFloat(tray.price) + parseFloat(data.fee) + parseFloat($("#tip").val()) + parseFloat(data.tax)).toFixed(2));
   });
   $("#trayList").listview("refresh");
 }
@@ -490,20 +512,4 @@ function orderTray(){
     tray_str += tray.items[i].id + "/" + tray.items[i].quantity + options; 
   }
   return tray_str;
-}
-
-function serializeObject(form) {
-    var o = {};
-    var a = form.serializeArray();
-    $.each(a, function() {
-        if (o[this.name.replace("extra_", "")] !== undefined) {
-            if (!o[this.name.replace("extra_", "")].push) {
-                o[this.name.replace("extra_", "")] = [o[this.name.replace("extra_", "")]];
-            }
-            o[this.name.replace("extra_", "")].push(this.value || '');
-        } else {
-            o[this.name.replace("extra_", "")] = this.value || '';
-        }
-    });
-    return o;
 }

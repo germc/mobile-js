@@ -9,5 +9,5 @@ function Money(amount) {
 }
 
 Money.prototype._convertForAPI = function() {
-  return parseFloat(this.amount) * 100;
+  return parseFloat(this.amount);
 }

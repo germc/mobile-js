@@ -150,9 +150,31 @@
     <div data-role='content'>
       <ul data-role='listview' id='trayList'>
       </ul>
-      <div>
-        <label for='tip'>Tip</label>
-        <input type='text' id='tip'></input>
+      <div id='trayPrices'>
+        <div class='trayPriceContainer'>
+          <div class='redInputLabel'>Subtotal</div>
+          <div class='trayPriceNumber' id='traySubtotal'></div>
+        </div>
+        
+        <div class='trayPriceContainer'>
+          <div class='redInputLabel'>Delivery Fee</div>
+          <div class='trayPriceNumber' id='trayFee'></div>
+        </div>
+
+        <div class='trayPriceContainer'>
+          <div class='redInputLabel'>Tax</div>
+          <div class='trayPriceNumber' id='trayTax'></div>
+        </div>
+
+        <div class='trayPriceContainer'>
+          <div class='redInputLabel' for='tip'>Tip</div>
+          <input type='number' id='tip' class='numberInput'></input>
+        </div>
+
+        <div class='trayPriceContainer'>
+          <div class='redInputLabel'>Total</div>
+          <div class='trayPriceNumber' id='trayTotal'></div>
+        </div>
       </div>
       <a data-role='button' onclick='prepareOrder();'>Order</a>
     </div> 
@@ -456,12 +478,12 @@
       <ul id="extrasList" data-role='listview' data-inset="true">
       </ul>
       <div id="quantityPicker">
-        <div id='quantityLabel'>Quantity</div>
+        <div class='redInputLabel' id='quantityLabel'>Quantity</div>
         <div id='quantityButtons'>
           <img src='images/button-plus-off.png' class='quantity_btn' id='quantityUp_btn' onclick="increaseQuantity()" />
           <img src='images/button-minus-off.png' class='quantity_btn' id='quantityDown_btn' onclick='decreaseQuantity()' />
         </div>
-        <input type='number' id='extrasQuantity' value="1"></input><!-- TODO: make this numbers only -->
+        <input type='number' class='numberInput' id='extrasQuantity' value="1"></input><!-- TODO: make this numbers only -->
       </div>
       <img src='images/button-addtray-off.png' onclick='addCurrItemToTray()' class='centerButton'/>
     </div>
