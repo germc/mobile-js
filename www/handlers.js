@@ -36,18 +36,19 @@ function createAddress(){
 		place = new Address($("#createAddressAddress").val(), $("#createAddressAddress2").val(), $("#createAddressCity").val(), 
                         $("#createAddressZip").val(), $("#createAddressState").val(), $("#createAddressPhone").val(), 
                         $("#createAddressName").val());
+    time  = "ASAP";
 		$.mobile.changePage("#restaurant");
 		    if (currUser.email != "guest"){
           Ordrin.u.updateAddress(place, function(data){
-          data = JSON.parse(data);
-          if (data._error != undefined && data._error != 0){
-            error(data.msg);
-          }else{
-            getRestaurantList(place, "ASAP", true);
-	      	}
+            data = JSON.parse(data);
+            if (data._error != undefined && data._error != 0){
+              error(data.msg);
+            }else{
+              getRestaurantList(true);
+            }
           });
     }else{
-       getRestaurantList(place, "ASAP", true); 
+       getRestaurantList(true); 
     }
 }
 function loginUser(){
