@@ -224,6 +224,9 @@ body{
 .restaurantListItem{
 	color: #D0CFC3;
 }
+#timePicker{
+  z-index: 100;
+}
 /* Footer styles */
 
 #home_btn .ui-icon{
@@ -345,6 +348,10 @@ body{
 #itemName{
   font-weight: bold;
   color: #000000;
+}
+#itemPrice{
+  text-align: right;
+  margin-top: -12px;
 }
 #extrasList li, #optionsList li{
   background-color: #e8e8e0;

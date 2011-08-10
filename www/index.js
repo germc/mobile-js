@@ -313,6 +313,9 @@ function populateMenuItems() {
   var index = parseInt(this.id.replace("menu", ""));
 	currMenu = index;
   $("#menuItemList").empty();
+  for (var i = 0; i < currRest.menu[currMenu].children.length; i++){
+    currRest.menu[currMenu].children[i].price = parseFloat(currRest.menu[currMenu].children[i].price).toFixed(2);
+  }
   $("#menuItemTemplate").tmpl(currRest.menu[currMenu].children).appendTo("#menuItemList");
   $(".typeName").html(currRest.menu[currMenu].name);
   $(".typeDescrip").html(currRest.menu[currMenu].descrip);
@@ -353,6 +356,7 @@ function populateExtras(){
 	if (currItem.children) {
     $("#itemName").html(currItem.name);
     $("#itemDescrip").html(currItem.descrip);
+    $("#itemPrice").html("$" + parseFloat(currItem.price).toFixed(2));
     $("#extrasList").empty();
     for (i = 0; i < currItem.children.length; i++){
       if (!currItem.extras[currItem.children[i].id]){
@@ -436,6 +440,7 @@ function addCurrItemToTray(){
     $(".innerCount").html(tray.count);
     $('.trayCount').show();
     $.mobile.changePage("#restDetails", {reverse: "true"}); 
+    currItem = null;
   }else{
     tray.price     += parseFloat(currItem.price * currItem.quantity - currItem.originalPrice * currItem.originalQuantity);
     tray.count     += parseInt(currItem.quantity - currItem.originalQuantity); 
