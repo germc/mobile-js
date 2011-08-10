@@ -5,6 +5,7 @@
  * 		 Save user account (use phonegap for local data storage)
  * 		 Save previous address (use phonegap for local data storage)
  * 		 Switch to opening dialogs with new functions
+ *     Time picker so that not all orders are ASAP, also dont allow people to add items to tray if the restaurant is not delivering during their time
  */
 // application globals
 var delList, storage, db, currMenu, currRest, currItem, currExtra, place, tray = {
@@ -79,7 +80,8 @@ $(window).load(function(){
 			}
 		});
 	});
-	Ordrin.initialize("348482827700", "http://nn2.deasil.com"); // for now this will be deasil
+	Ordrin.initialize("mlJhC8iX4BGWVtn", "https://r-test.ordr.in"); // for now this will be deasil
+  //Ordrin.initialize("key", "localhost/ordrin");
   /*$("#extrasOverview").bind("pagebeforeshow pageshow", function(){
     $("#extrasList").listview("refresh");
   });*/
@@ -90,6 +92,7 @@ $(window).load(function(){
    $("#restaurantSelectorParent").removeClass("ui-btn ui-btn-corner-all ui-shadow ui-btn-up-a");
    $("#restaurantSelectorParent>.ui-btn-inner").removeClass("ui-btn-inner");
 	 $("#login_btn").click(loginUser);
+   $("#checkout_btn").click(checkout);
 	
 	$("#postAccount_btn").click(createAccount);
 	// handle the user switching the type of restaurant
@@ -131,7 +134,7 @@ function getAddresses(default_bool){
 							 }
 							 data = JSON.parse(data);
 							 if (data.length == 1){ // the user only has one address so convert the object and send it straight to the resturant list
-									var place = new Address(data[0].addr, data[0].addr2, data[0].city, data[0].zip, data[0].state, data[0].phone, data[0].nick);
+									place = new Address(data[0].addr, data[0].addr2, data[0].city, data[0].zip, data[0].state, data[0].phone, data[0].nick);
 									 var time = new Date();
 									 time.setASAP();
 									 //storage.setItem("address", JSON.stringify(place));
@@ -151,7 +154,7 @@ function getAddresses(default_bool){
 			 }else{
          // the user has a default address so move on to restaurants
          var item = results.rows.item(0);
-         var place = new Address(item.street, item.street2, item.city, item.zip, item.state, item.phone, "");
+         place = new Address(item.street, item.street2, item.city, item.zip, item.state, item.phone, "");
          var time  = new Date();
          time.setASAP();
          getRestaurantList(place, time, false);
@@ -280,7 +283,7 @@ function populateMenuItems() {
   $(".typeName").html(currRest.menu[currMenu].name);
   $(".typeDescrip").html(currRest.menu[currMenu].descrip);
   $.mobile.changePage("#menuItems");
-  $(".typeItem").click(populateExtras);
+  $(".typeItem").click(setCurrItem);
   $("#menuItemList").listview("refresh");
 }
 
@@ -296,14 +299,18 @@ function deactivateButtons(){
   $(".ui-btn-active").removeClass("ui-btn-active");
 }
 
-function populateExtras(){
+function setCurrItem(){
   var index = parseInt(this.id.replace("item", ""));
-	for (var i = 0; i < currRest.menu[currMenu].children.length; i++) {
-		if (currRest.menu[currMenu].children[i].id == index) {
-			currItem = currRest.menu[currMenu].children[i];
-			break;
-		}
-	}
+    for (var i = 0; i < currRest.menu[currMenu].children.length; i++) {
+      if (currRest.menu[currMenu].children[i].id == index) {
+        currItem = currRest.menu[currMenu].children[i];
+        break;
+      }
+    }
+  populateExtras();
+}
+
+function populateExtras(){
   if (!currItem.extras){
     currItem.extras     = {};
     currItem.extras_str = "";
@@ -391,11 +398,66 @@ function addCurrItemToTray(){
 
 function loadTray(){
   $("#trayList").empty();
+  for (var i = 0; i < tray.items.length; i++){
+    tray.items[i].index = i;
+  }
   $("#trayItemTemplate").tmpl(tray.items).appendTo("#trayList");
   $.mobile.changePage("#tray", {
     transition: "flip"
   });
   $("#trayList").listview("refresh");
+}
+
+function editTrayItem(i){
+  currItem = tray.items[i];
+  populateExtras();
+  for (var j in currItem.extras){
+    for (var h = 0; h < currItem.extras[j].length; h++){
+     $("#extra" + j + " .optionsList").append(currItem.extras[j][h].name + ", "); 
+    }
+  }
+  $("#extrasOverview>div").filter(":first").children("a").attr("href", "#tray");
+}
+
+function prepareOrder(){
+  if (currUser.email == "guest"){
+    $.mobile.changePage("#checkout", {
+      transition: "slidedown"
+    });
+  }
+}
+
+function checkout(){
+  var tray_str = orderTray();
+  var tip  = new Money($("#tip").val());
+  var time = new Date();
+  time.setASAP();
+  var creditPlace = new Address($("#creditCardBilling").val(), "", $("#creditCardCity").val(), $("#creditCardZip").val(),
+                                $("#creditCardState").val(), $("#orderPhone").val(), "home");
+  place.phone     = $("#orderPhone").val();
+  Ordrin.site     = "https://o-test.ordr.in";
+  Ordrin._key     = "mlJhC8iX4BGWVtn";
+  Ordrin.o.submit(currRest.restaurant_id, tray_str, tip, time, $("#orderEmail").val(), 
+                  $("#orderFirstName").val(), $("#orderLastName").val(), place, 
+                  $("#creditCardName").val(), $("#creditCardNumber").val(), $("#creditCardCvc").val(), 
+                  $("#creditCardExpirationMonth").val() + "/" + $("#creditCardExpirationYear").val(),
+                  creditPlace, "", "", function(data){
+                    console.log("order placed", data);
+                  });
+}
+
+function orderTray(){
+  var options = "", tray_str = "";
+  for (var i = 0; i < tray.items.length; i++){
+    options = "";
+    for (var j in tray.items[i].extras){
+      for (var h = 0; h < tray.items[i].extras[j]; h++){
+        options += "," + tray.items[i].extras[j].id;
+      }
+    }
+    tray_str += tray.items[i].id + "/" + tray.items[i].quantity + options; 
+  }
+  return tray_str;
 }
 
 function serializeObject(form) {

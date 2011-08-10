@@ -68,10 +68,12 @@
 </script>
 <script id='trayItemTemplate' type="text/x-jquery-tmpl">
   <li id='trayItem${id}' class='trayItem'>
-    <span class='itemName'>${name}</span>
-    <span class='itemDescrip'>${descrip}</span>
-    <p class='extrasList'>${extras_str}</p>
-    <span class='ui-li-count'>${quantity}</span>
+    <a onclick='editTrayItem(${index})'>
+      <p class='itemName'>${name}</p>
+      <p class='itemDescrip'>${descrip}</p>
+      <p class='extrasList'>${extras_str}</p>
+      <span class='ui-li-count'>${quantity}</span>
+    </a>
   </li>
 </script>
 </head>
@@ -107,7 +109,118 @@
     <div data-role='content'>
       <ul data-role='listview' id='trayList'>
       </ul>
+      <div>
+        <label for='tip'>Tip</label>
+        <input type='text' id='tip'></input>
+      </div>
+      <a data-role='button' onclick='prepareOrder();'>Order</a>
     </div> 
+    <div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
+			<div data-role = "navbar" class = "mainFooter">
+				<ul>
+					<li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
+					<li>
+             <div class='circle trayCount'><p class='innerCount'>1</p></div>
+            <a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a>
+          </li>
+					<li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
+					<li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
+				</ul>
+			</div>
+		</div>
+  </div>
+
+  <div data-role='page' id='checkout'>
+    <div data-role='header'>
+      <h1>Checkout</h1>
+    </div>
+    <div data-role='content'>
+      <ul data-role = 'listview' class = 'formGroup' data-inset = 'true'>
+				<div class = 'formInput'>
+					<div class = 'formLabel'>Card Type:</div>
+          <div class='selectBox'>
+            <select data-role='none' id='cardType_select'>
+              <option value='ax'>American Express</option>
+              <option value='di'>Discover</option>
+              <option value='mc'>Mastercard</option>
+              <option value='vi'>Visa</option>
+            </select>
+          </div>
+				</div>
+				<div  class = 'formInput'>
+					<div class = 'formLabel'>Card Number:</div>
+					<div class='inputContainer'><input type = "text" data-role = 'none' name = "city" id ="creditCardNumber"></input></div>
+				</div>
+				<div  class = 'formInput'>
+					<div class = "formLabel">Expiration Date:</div>
+          <div class='selectBox'>
+            <select data-role='none' id='creditCardExpirationMonth' value='month'>
+              <option value='month'>Month</option>
+              <option value='01'>01</option>
+              <option value='02'>02</option>
+              <option value='03'>03</option>
+              <option value='04'>04</option>
+              <option value='05'>05</option>
+              <option value='06'>06</option>
+              <option value='07'>07</option>
+              <option value='08'>08</option>
+              <option value='09'>09</option>
+              <option value='10'>10</option>
+              <option value='11'>11</option>
+              <option value='12'>12</option>
+            </select>
+            <select data-role='none' id='creditCardExpirationYear' value='year'>
+              <option value='year' disabled='disabled'>Year</option>
+              <option value='2011'>2011</option>
+              <option value='2012'>2012</option>
+              <option value='2013'>2013</option>
+              <option value='2014'>2014</option>
+            </select>
+          </div>
+				</div>
+				<div class='formInput'>
+					<div class = 'formLabel'>Security Code</div>
+				 	<div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardCvc"></input></div>
+				</div>
+        <div class='formInput'>
+					<div class = 'formLabel'>Name on Credit Card</div>
+					<div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardName"></input></div>
+				</div>
+        <div class='formInput'>
+					<div class = 'formLabel'>Billing Address</div>
+					<div class='inputContainer'><input type = "text" data-role='none' name="zip" id="creditCardBilling"></input></div>
+				</div>
+        <div class='formInput'>
+					<div class = 'formLabel'>City</div>
+					<div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardCity"></input></div>
+				</div>
+        <div class='formInput'>
+					<div class='formLabel'>State</div>
+          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardState"></input></div>
+				</div>
+        <div class='formInput'>
+          <div class = 'formLabel'>Zip</div>
+          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardZip"></input></div>
+				</div>
+        <div class='formInput'>
+          <div class = 'formLabel'>Email Address</div>
+          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "orderEmail"></input></div>
+				</div>
+        <div class='formInput'>
+          <div class = 'formLabel'>Phone Number</div>
+          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "orderPhone"></input></div>
+				</div>
+        <div class='formInput'>
+          <div class = 'formLabel'>First Name</div>
+          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "orderFirstName"></input></div>
+				</div>
+        <div class='formInput'>
+          <div class = 'formLabel'>Last Name</div>
+          <div class='inputContainer'><input type = "text" data-role='none' name="zip" id="orderLastName"></input></div>
+				</div>
+				<div data-role = "button" id = "checkout_btn" data-icon = "check">Go</div>
+      </ul>
+    </div>
   </div>
 
 	<div data-role = "page" id = "login">
@@ -292,7 +405,7 @@
   <div data-role="page" id="extrasOverview">
     <div data-role="header">
       <h1>Item</h1>
-      <a href = "#" data-rel = 'back' data-icon="arrow-l">Items</a>
+      <a href = "#menuItems" style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Items</a>
     </div>
     <div data-role="content">
       <p id = 'itemInfo'>
