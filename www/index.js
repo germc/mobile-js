@@ -85,7 +85,7 @@ $(window).load(function(){
     restaurant: "https://r-test.ordr.in",
     user: "https://u-test.ordr.in",
     order: "https://o-test.ordr.in"
-  }); // for now this will be deasil
+  }); 
   //Ordrin.initialize("key", "localhost/ordrin");
   /*$("#extrasOverview").bind("pagebeforeshow pageshow", function(){
     $("#extrasList").listview("refresh");
@@ -96,10 +96,10 @@ $(window).load(function(){
 
    $("#restaurantSelectorParent").removeClass("ui-btn ui-btn-corner-all ui-shadow ui-btn-up-a");
    $("#restaurantSelectorParent>.ui-btn-inner").removeClass("ui-btn-inner");
-	 $("#login_btn").click(loginUser);
-   $("#checkout_btn").click(checkout);
+	 $("#login_btn").bind("tap", loginUser);
+   $("#checkout_btn").bind("tap", checkout);
 	
-	$("#postAccount_btn").click(createAccount);
+	$("#postAccount_btn").bind("tap", createAccount);
 	// handle the user switching the type of restaurant
 	$("#restaurantTypes_selector").change(function(){
 		var currentSelector = $("#restaurantTypes_selector").val();
@@ -316,7 +316,7 @@ function populateMenuItems() {
   $(".typeName").html(currRest.menu[currMenu].name);
   $(".typeDescrip").html(currRest.menu[currMenu].descrip);
   $.mobile.changePage("#menuItems");
-  $(".typeItem").click(setCurrItem);
+  $(".typeItem").bind("tap");
   $("#menuItemList").listview("refresh");
 }
 
