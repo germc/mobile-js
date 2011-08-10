@@ -338,6 +338,7 @@ function setCurrItem(){
     for (var i = 0; i < currRest.menu[currMenu].children.length; i++) {
       if (currRest.menu[currMenu].children[i].id == index) {
         currItem = currRest.menu[currMenu].children[i];
+        currItem.menuPrice = currItem.price;
         break;
       }
     }
@@ -354,7 +355,7 @@ function populateExtras(){
     $("#itemDescrip").html(currItem.descrip);
     $("#extrasList").empty();
     for (i = 0; i < currItem.children.length; i++){
-      if (!currItem.extras[currItem.children[i].name]){
+      if (!currItem.extras[currItem.children[i].id]){
         currItem.extras[currItem.children[i].id] = [];
       }
       $.tmpl("<li class='ui-btn ui-btn-icon-right' id='extra${id}' onclick='createExtrasPage(\"${index}\");'>${name}<div class='optionsList'></div><span class=\"ui-icon ui-icon-arrow-r\"></span></li>", 
@@ -405,7 +406,7 @@ function validateForm() {
     if (!$($("#optionsList").children()[i]).children("img").hasClass("hidden")){
       currItem.extras[currExtra.id].push(currExtra.children[i]);
       $("#extra" + currExtra.id + " .optionsList").append(currExtra.children[i].name + ", ");
-      extras_str += currExtra.children[i].name + ", ";
+      extras_str += ", " + currExtra.children[i].name;
       totalExtras++;
     }
   }
@@ -420,23 +421,46 @@ function validateForm() {
     currItem.extras[currExtra.id] = [];
     return;
   }
-  currItem.extras_str += extras_str;
+  currItem.extras_str += extras_str.substr(2);
   history.back();
 }
 
 function addCurrItemToTray(){
   calculateItemPrice(currItem);
   currItem.quantity = $("#extrasQuantity").val();
-  tray.items.push(currItem);
-  tray.price += parseFloat(currItem.price);
-  tray.count += parseInt(currItem.quantity);
-  $(".innerCount").html(tray.count);
-  $('.trayCount').show();
-  $.mobile.changePage("#restDetails", {reverse: "true"}); 
+  if (!currItem.inTray){
+    tray.items.push(currItem);
+    tray.price     += parseFloat(currItem.price * currItem.quantity);
+    tray.count     += parseInt(currItem.quantity);
+    currItem.inTray = true;
+    $(".innerCount").html(tray.count);
+    $('.trayCount').show();
+    $.mobile.changePage("#restDetails", {reverse: "true"}); 
+  }else{
+    tray.price     += parseFloat(currItem.price * currItem.quantity - currItem.originalPrice * currItem.originalQuantity);
+    tray.count     += parseInt(currItem.quantity - currItem.originalQuantity); 
+    $(".innerCount").html(tray.count);
+    updateTrayPrice($("#tip").val());
+    createExtrasString();
+    $("#trayList").empty();
+    $("#trayItemTemplate").tmpl(tray.items).appendTo("#trayList");
+    $("#trayList").listview("refresh");
+    history.back();
+  }
+}
+
+function createExtrasString(){
+  currItem.extras_str = "";
+  for (var i in currItem.extras){
+    for (var j = 0; j < currItem.extras[i].length; j++){
+      currItem.extras_str += ", " + currItem.extras[i][j].name;
+    }
+  }
+  currItem.extras_str = currItem.extras_str.substr(2);
 }
 
 function calculateItemPrice(item){
-  item.price = parseFloat(item.price); // make sure the price is a number and not a string.
+  item.price = parseFloat(item.menuPrice); // make sure the price is a number and not a string and is the original menu price before any addons.
   for (var i in item.extras){
     for (var j = 0; j < item.extras[i].length; j++){
       item.price += parseFloat(item.extras[i][j].price);
@@ -456,18 +480,25 @@ function loadTray(){
   });
   tip = (tray.price * .2).toFixed(2); //set the initial tip to 20% of the price.
   $("#tip").val(tip);
+  updateTrayPrice(tip);
+  $("#trayList").listview("refresh");
+}
+
+function updateTrayPrice(tip){
   Ordrin.r.deliveryFee(currRest.restaurant_id, new Money(tray.price), new Money(tip), time, place, function(data){
     data = JSON.parse(data);
-    $("#traySubtotal").html("$" + tray.price);
+    $("#traySubtotal").html("$" + tray.price.toFixed(2));
     $("#trayFee").html("$" + data.fee);
     $("#trayTax").html("$" + data.tax);
     $("#trayTotal").html("$" + (parseFloat(tray.price) + parseFloat(data.fee) + parseFloat($("#tip").val()) + parseFloat(data.tax)).toFixed(2));
   });
-  $("#trayList").listview("refresh");
+
 }
 
 function editTrayItem(i){
-  currItem = tray.items[i];
+  currItem                  = tray.items[i];
+  currItem.originalQuantity = currItem.quantity;
+  currItem.originalPrice    = currItem.price;
   populateExtras();
   for (var j in currItem.extras){
     for (var h = 0; h < currItem.extras[j].length; h++){
