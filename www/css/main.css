@@ -270,6 +270,12 @@ body{
 .mainFooter .ui-btn .ui-btn-inner { padding-top: 40px !important; }
 .mainFooter .ui-btn .ui-icon { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none; -moz-box-shadow: none; -webkit-box-shadow: none; -webkit-border-radius: none !important; border-radius: none !important; }
 
+/* Time Picker Styles */
+.planBlack_txt{
+  text-shadow: none;
+  color: #000000;
+}
+
 /* Restaurant Details Styles */
 #restHeader{
 	font-weight: bold;

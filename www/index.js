@@ -11,7 +11,7 @@
 var delList, storage, db, currMenu, currRest, currItem, currExtra, place, tray = {
   items: [],
   count: 0
-};
+}, time;
 var currUser = {
 	email: "",
 	pass: ""
@@ -68,6 +68,7 @@ $(window).load(function(){
 					});
 				}, function(positionError){
 					$("#createAddressHeader").html("Where Would You Like Your Food Delivered To?");
+          $("#createAddressSub").html("");
 					$.mobile.changePage("#createAddress");
 					//$("#createAddressAddress").focus();
 				});
@@ -80,7 +81,11 @@ $(window).load(function(){
 			}
 		});
 	});
-	Ordrin.initialize("mlJhC8iX4BGWVtn", "https://r-test.ordr.in"); // for now this will be deasil
+	Ordrin.initialize("mlJhC8iX4BGWVtn", {
+    restaurant: "https://r-test.ordr.in",
+    user: "https://u-test.ordr.in",
+    order: "https://o-test.ordr.in"
+  }); // for now this will be deasil
   //Ordrin.initialize("key", "localhost/ordrin");
   /*$("#extrasOverview").bind("pagebeforeshow pageshow", function(){
     $("#extrasList").listview("refresh");
@@ -113,11 +118,12 @@ $(window).load(function(){
 			}
 		}
 	});
-  $(".optionBox").live("click", function(){
+  $(".optionBox").live("tap", function(){
     var id = this.id.replace("option", "");
     $(this).children("img").toggleClass("hidden");
   });
-	$("#createAddress_btn").click(createAddress);
+	$("#createAddress_btn").bind("tap", createAddress);
+  $("#changeDeliveryTime_btn").bind("tap", changeDeliveryTime);
 });
 
 function getAddresses(default_bool){
@@ -135,10 +141,9 @@ function getAddresses(default_bool){
 							 data = JSON.parse(data);
 							 if (data.length == 1){ // the user only has one address so convert the object and send it straight to the resturant list
 									place = new Address(data[0].addr, data[0].addr2, data[0].city, data[0].zip, data[0].state, data[0].phone, data[0].nick);
-									 var time = new Date();
+									 time = new Date();
 									 time.setASAP();
-									 //storage.setItem("address", JSON.stringify(place));
-									 getRestaurantList(place, time);
+									 getRestaurantList(false);
 							 }else{ // the user has more than 1 address so open a dialog to let them choose which address to use and the get the restaurant list. Possibly save their choice?
 									 openDialog("body", "selectAddress", "slidedown");
 									 $("#selectAddress").bind("pageshow", {"data": data}, function(event){
@@ -155,9 +160,9 @@ function getAddresses(default_bool){
          // the user has a default address so move on to restaurants
          var item = results.rows.item(0);
          place = new Address(item.street, item.street2, item.city, item.zip, item.state, item.phone, "");
-         var time  = new Date();
+         time  = new Date();
          time.setASAP();
-         getRestaurantList(place, time, false);
+         getRestaurantList(false);
 			 }
 		});
 	}
@@ -195,7 +200,7 @@ function getAddresses(default_bool){
 }
 
 function addressSelected(place, time){
-	getRestaurantList(place, time);
+	getRestaurantList(false);
 	storage.setItem("address", JSON.stringify(place));
 }
 
@@ -204,7 +209,8 @@ function openDialog(parent, name, transition){
 	$("#removeMe").click().remove();
 }
 
-function getRestaurantList(place, time, storePlace){
+function getRestaurantList(storePlace){
+  $.mobile.pageLoading();
 	if (time == "ASAP"){
 		time = new Date();
 		time.setASAP();
@@ -219,6 +225,7 @@ function getRestaurantList(place, time, storePlace){
 			data[i].cuisines = data[i].cuisines.substr("2");
 		}
 		delList = data;
+    $("#restList").empty();
 		$("#restListTemplate").tmpl(data).appendTo("#restList");
 		$("#restList").listview('refresh');
 		var restTypes = {};
@@ -235,6 +242,7 @@ function getRestaurantList(place, time, storePlace){
 			$("#restaurantTypes_selector").append("<option value = '" + i + "'>" + i + " (" + restTypes[i] + ")" + "</option>");
 		}
 		$("#restaurantTypes_selector").selectmenu('refresh', true);
+    $.mobile.pageLoading(true);
 	})
   if (storePlace){
     db.storeAddress(place.street, place.street2, place.city, place.zip, place.state, place.phone, place.nice,
@@ -250,29 +258,54 @@ function storeUser(email, pass, defaultAccount){
 
 function getRestDetails(index){
 	currRest = delList[index];
+  var id   = currRest.id
   $.mobile.pageLoading();
-  Ordrin.r.details(currRest.id, function(data){
-    data = JSON.parse(data);
-    for(var i = 0; i < data.menu.length; i++) {
-      data.menu[i].index = i;
-    }
-    $(".restName").html(data.name);
-    $("#cuisineList").html(data.cuisines);
-    $("#rAddress").html(data.addr + " " + data.city + ", " + data.state + " " + data.postal_code);
-    $("#minimumDelivery").html("$" + currRest.mino);
-    $("#estimatedDelivery").html(currRest.del ? currRest.del : "0" + " minutes");
-    $("#menu").empty();
-    $("#menuListTemplate").tmpl(data.menu).appendTo("#menu");
+  if (currRest.is_del){
+    Ordrin.r.details(currRest.id, function(data){
+      data = JSON.parse(data);
+      for(var i = 0; i < data.menu.length; i++) {
+        data.menu[i].index = i;
+      }
+      $(".restName").html(data.name);
+      $("#cuisineList").html(data.cuisines);
+      $("#rAddress").html(data.addr + " " + data.city + ", " + data.state + " " + data.postal_code);
+      $("#minimumDelivery").html("$" + currRest.mino);
+      $("#estimatedDelivery").html(currRest.del ? currRest.del : "0" + " minutes");
+      $("#menu").empty();
+      $("#menuListTemplate").tmpl(data.menu).appendTo("#menu");
 
-    currRest = data;
-    $("#menu").listview('refresh');
-    $(".typeMenu").unbind();
-    $(".typeItem").unbind();
-    $(".typeMenu").bind("tap", populateMenuItems);
-    $.mobile.pageLoading(true);
-  });
+      currRest = data;
+      currRest.restaurant_id = id;
+      $("#menu").listview('refresh');
+      $(".typeMenu").unbind();
+      $(".typeItem").unbind();
+      $(".typeMenu").bind("tap", populateMenuItems);
+      $.mobile.pageLoading(true);
+    });
+    $.mobile.changePage("#restDetails");
+   }else{
+     var days = [
+      new Date()
+     ];
+     $("#deliveryDate").append("<option value='" + days[0].toLocaleDateString() + "'>" +
+                                 days[0].toLocaleDateString() + "</option>")
+     for (var i = 1; i < 5; i++){
+       days.push(new Date(days[i-1].getTime() + 86400000)); 
+       $("#deliveryDate").append("<option value='" + days[i].toLocaleDateString() + "'>" +
+                                 days[i].toLocaleDateString() + "</option>")
+     }
+     $.mobile.changePage("#timePicker", {
+       role: "dialog",
+       transition: "slideup"
+     });
+   }
+}
 
-  $.mobile.changePage("#restDetails");
+function changeDeliveryTime(){
+ var date = $("#deliveryDate").val() + " " + $("#deliveryTime").val() + " " + $("#deliveryAmPm").val();
+ time = new Date(date); 
+ $.mobile.activePage.dialog('close');
+ getRestaurantList(false);
 }
 
 function populateMenuItems() {
@@ -327,6 +360,7 @@ function populateExtras(){
              {name: currItem.children[i].name, index: i, id: currItem.children[i].id}).appendTo("#extrasList");
     }
 		$.mobile.changePage("#extrasOverview");
+    $("#extrasOverview>div").filter(":first").children("a").attr("href", "#menuItems").children().children(".ui-btn-text").html("Items");
 		$("#extrasList").listview("refresh");
 	}else{
     addCurrItemToTray();
@@ -361,7 +395,8 @@ function createExtrasPage(index){
 function validateForm() {
   var min         = currExtra.min_child_select,
       max         = currExtra.max_child_select,
-      totalExtras = 0;
+      totalExtras = 0
+      extras_str  = "";
   if(!min && !max) return;
   currItem.extras[currExtra.id]            = [];
   $("#extra" + currExtra.id + " .optionsList").html("");
@@ -369,7 +404,7 @@ function validateForm() {
     if (!$($("#optionsList").children()[i]).children("img").hasClass("hidden")){
       currItem.extras[currExtra.id].push(currExtra.children[i]);
       $("#extra" + currExtra.id + " .optionsList").append(currExtra.children[i].name + ", ");
-      currItem.extras_str += currExtra.children[i].name + ", ";
+      extras_str += currExtra.children[i].name + ", ";
       totalExtras++;
     }
   }
@@ -384,6 +419,7 @@ function validateForm() {
     currItem.extras[currExtra.id] = [];
     return;
   }
+  currItem.extras_str += extras_str;
   history.back();
 }
 
@@ -416,7 +452,7 @@ function editTrayItem(i){
      $("#extra" + j + " .optionsList").append(currItem.extras[j][h].name + ", "); 
     }
   }
-  $("#extrasOverview>div").filter(":first").children("a").attr("href", "#tray");
+  $("#extrasOverview>div").filter(":first").children("a").attr("href", "#tray").children().children(".ui-btn-text").html("Tray");
 }
 
 function prepareOrder(){
@@ -430,13 +466,9 @@ function prepareOrder(){
 function checkout(){
   var tray_str = orderTray();
   var tip  = new Money($("#tip").val());
-  var time = new Date();
-  time.setASAP();
   var creditPlace = new Address($("#creditCardBilling").val(), "", $("#creditCardCity").val(), $("#creditCardZip").val(),
                                 $("#creditCardState").val(), $("#orderPhone").val(), "home");
   place.phone     = $("#orderPhone").val();
-  Ordrin.site     = "https://o-test.ordr.in";
-  Ordrin._key     = "mlJhC8iX4BGWVtn";
   Ordrin.o.submit(currRest.restaurant_id, tray_str, tip, time, $("#orderEmail").val(), 
                   $("#orderFirstName").val(), $("#orderLastName").val(), place, 
                   $("#creditCardName").val(), $("#creditCardNumber").val(), $("#creditCardCvc").val(), 

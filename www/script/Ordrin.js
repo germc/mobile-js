@@ -15,12 +15,21 @@ Ordrin = {
   _checkNums: /^\s*\d+\s*$/,
   _checkCC: /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/, 
   site: "", // domain at which API is grabbed from (either own with reverse origin proxy or Ordrin URL if JSONP used)
+  _sites: {}, // optional list of orer, restaurant, and user api urls
   
   initialize: function(key, site, apiMethod) {
     // establish the developer key and site used + validate
     if (!key) { this._errs.push("connection - no API key provided"); }
     if (!site) { this._errs.push("connection - no site provided (your own in case of reverse origin proxy, Ordr.in's in case of JSONP being used)"); }
-    this.site = site;
+    if (typeof site === "string"){
+      // site is a string so there is only one url
+      this._sites.restuarant = site;
+      this._sites.order      = site;
+      this._sites.user       = site;
+    }else{
+      // site is an object with 3 urls so store it in the sites object
+      this._sites = site;
+    }
     this._key = key;
     this._apiMethod = apiMethod;
 
@@ -57,7 +66,6 @@ Ordrin = {
       appends.push(["_auth", "1," + this._key]);
 
       if (this._xmlhttp) { // reverse origin proxy method
-        var url = this.site + "/" + request + paramsURL; // + Ordrin._append; // NEEDS HTTPS:// ADDED AFTER TESTING
         console.log("url: " + url);
         
         for (var i = 0; i < outForm.length; i++) {
@@ -68,16 +76,39 @@ Ordrin = {
   
         // set what kind of connection is being made based on API (user API split into a get, post, delete, put components)
         switch (api) {
-          case "r": this._xmlhttp.open("GET",url + "/100",true); break;
-          case "o": this._xmlhttp.open("POST",url,true); break;
-          case "uG": this._xmlhttp.open("GET",url,true); userAuth = 1; break;
-          case "uP": this._xmlhttp.open("POST",url,true); break;
-          case "uPu": this._xmlhttp.open("PUT",url,true); userAuth = 1; break;
-          case "uD": this._xmlhttp.open("DELETE",url,true); userAuth = 1; break;
+          case "r": 
+            this.site = this._sites.restaurant;
+            var url = this.site + "/" + request + paramsURL; //  Ordrin._append; // NEEDS HTTPS:// ADDED AFTER TESTING
+            this._xmlhttp.open("GET",url + "/100",true);
+          break;
+          case "o": 
+            this.site = this._sites.order;
+            var url = this.site + "/" + request + paramsURL; //  Ordrin._append; // NEEDS HTTPS:// ADDED AFTER TESTING
+            this._xmlhttp.open("POST",url,true); 
+          break;
+          case "uG": 
+            this.site = this._sites.user;
+            this._xmlhttp.open("GET",url,true);
+            userAuth = 1;
+          break;
+          case "uP": 
+            this.site = this._sites.user;
+            this._xmlhttp.open("POST",url,true);
+          break;
+          case "uPu": 
+            this.site = this._sites.user;
+            this._xmlhttp.open("PUT",url,true);
+            userAuth = 1;
+            break;
+          case "uD": 
+            this.site = this._sites.user;
+            this._xmlhttp.open("DELETE",url,true);
+            userAuth = 1;
+          break;
         }
         
         // feed data into callback function
-        if (api != "o" && func) {
+        if (func) {
           this._xmlhttp.onreadystatechange = function() {
           	if (this.readyState == 4){
           		if (this.status == 200){
