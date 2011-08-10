@@ -316,7 +316,7 @@ function populateMenuItems() {
   $(".typeName").html(currRest.menu[currMenu].name);
   $(".typeDescrip").html(currRest.menu[currMenu].descrip);
   $.mobile.changePage("#menuItems");
-  $(".typeItem").bind("tap");
+  $(".typeItem").bind("tap", setCurrItem);
   $("#menuItemList").listview("refresh");
 }
 
@@ -483,8 +483,8 @@ function orderTray(){
   for (var i = 0; i < tray.items.length; i++){
     options = "";
     for (var j in tray.items[i].extras){
-      for (var h = 0; h < tray.items[i].extras[j]; h++){
-        options += "," + tray.items[i].extras[j].id;
+      for (var h = 0; h < tray.items[i].extras[j].length; h++){
+        options += "," + tray.items[i].extras[j][h].id;
       }
     }
     tray_str += tray.items[i].id + "/" + tray.items[i].quantity + options; 
