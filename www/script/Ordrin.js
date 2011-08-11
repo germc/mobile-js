@@ -238,7 +238,7 @@ Ordrin = {
   
   // Order API 
   o: {
-    submit: function(restaurantID, tray, tip, dTime, em, first_name, last_name, addr, card_name, card_number, card_cvc, card_expiry, ccAddr, success_url, fail_url, func, errorFunc) {      
+    submit: function(restaurantID, tray, tip, dTime, em, password, first_name, last_name, addr, card_name, card_number, card_cvc, card_expiry, ccAddr, success_url, fail_url, func, errorFunc) {      
       for (var i=0;i<12;i++) {
         if (arguments[i] == "" || arguments[i] == null || typeof arguments[i] === "undefined") { Ordrin._errs.push("Ordrin.o.submit - validation - all arguments required; no null values allowed"); }
       }
@@ -265,7 +265,7 @@ Ordrin = {
         form.setAttribute("method", "POST");
         form.setAttribute("action", Ordrin._site + "/o/" + restaurantID);
 
-        var argNames = ["restaurantID", "tray", "tip", "dTime", "em", "first_name", "last_name", "addr", "card_name", "card_number", "card_cvc", "card_expiry", "ccAddr", "success_url", "fail_url"];
+        var argNames = ["restaurantID", "tray", "tip", "dTime", "em", "password", "first_name", "last_name", "addr", "card_name", "card_number", "card_cvc", "card_expiry", "ccAddr", "success_url", "fail_url"];
 
         // adding in all parameters for order form
         for(var key in arguments) {
@@ -295,6 +295,10 @@ Ordrin = {
                 hiddenField2.setAttribute("value", hours + ":" + minutes);
                 form.appendChild(hiddenField2);
               }
+            break;
+            case "password":
+              hiddenField.setAttribute("name", argNames[key]);
+              hiddenField.setAttribute("value", ordrin_SHA256(arguments[key]));
             break;
             case "addr":
               hiddenField.setAttribute("name", "addr");
@@ -386,7 +390,7 @@ Ordrin = {
           time = hours + ":" + minutes;
         }
 
-        Ordrin._apiRequest("o", "o", func, errorFunc, restaurantID, "tray=" + tray, "tip=" + tip._convertForAPI(), "delivery_date=" + date, "delivery_time=" + time, "first_name=" + first_name, "last_name=" + last_name, "addr=" + addr.street, "city=" + addr.city, "state=" + addr.state, "zip=" + addr.zip, "phone=" + addr.phone, "em=" + em, "card_name=" + card_name, "card_number=" + card_number, "card_cvc=" + card_cvc, "card_expiry=" + card_expiry, "card_bill_addr=" + ccAddr.street, "card_bill_addr2=" + ccAddr.street2, "card_bill_city=" + ccAddr.city, "card_bill_state=" + ccAddr.state, "card_bill_zip=" + ccAddr.zip, "success_url=" + success_url, "fail_url=" + fail_url, "type=RES");
+        Ordrin._apiRequest("o", "o", func, errorFunc, restaurantID, "tray=" + tray, "tip=" + tip._convertForAPI(), "delivery_date=" + date, "delivery_time=" + time, "first_name=" + first_name, "last_name=" + last_name, "addr=" + addr.street, "city=" + addr.city, "state=" + addr.state, "zip=" + addr.zip, "phone=" + addr.phone, "em=" + em, "password=" + ordrin_SHA256(password), "card_name=" + card_name, "card_number=" + card_number, "card_cvc=" + card_cvc, "card_expiry=" + card_expiry, "card_bill_addr=" + ccAddr.street, "card_bill_addr2=" + ccAddr.street2, "card_bill_city=" + ccAddr.city, "card_bill_state=" + ccAddr.state, "card_bill_zip=" + ccAddr.zip, "success_url=" + success_url, "fail_url=" + fail_url, "type=RES");
       }
     }
   },

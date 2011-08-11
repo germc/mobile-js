@@ -141,7 +141,7 @@
 		<string>IDEActiveWorkspaceTabController</string>
 		<string>IDEWindowToolbarIsVisible</string>
 		<string>IDEWindowTabBarIsVisible</string>
-		<string>{{94, 205}, {1400, 823}}</string>
+		<string>{{91, 212}, {1400, 816}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -325,7 +325,7 @@
 		<string>DVTIdentifier</string>
 		<string>DVTViewMagnitude</string>
 		<string></string>
-		<real>523</real>
+		<real>516</real>
 		<dict>
 			<key>$classes</key>
 			<array>
@@ -501,7 +501,7 @@
 		<string>IDESCMStatusFilteringEnabled</string>
 		<string>IDESelectedObjects</string>
 		<string>IDEExpandedItemsSet</string>
-		<string>{{0, 0}, {259, 703}}</string>
+		<string>{{0, 0}, {259, 696}}</string>
 		<false/>
 		<dict>
 			<key>$class</key>
@@ -1030,7 +1030,7 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>28</integer>
+					<integer>56</integer>
 				</dict>
 			</array>
 		</dict>
@@ -1952,7 +1952,7 @@
 		<string>PrimaryDocumentVisibleCharacterRange</string>
 		<string>HideAllIssues</string>
 		<string>PrimaryDocumentSelectedCharacterRange</string>
-		<real>334706294.86390501</real>
+		<real>334762022.864564</real>
 		<string>{0, 372}</string>
 		<string>{369, 0}</string>
 		<string>main()</string>
@@ -1998,7 +1998,7 @@
 				</dict>
 			</array>
 		</dict>
-		<string>{{0, 0}, {1140, 478}}</string>
+		<string>{{0, 0}, {1140, 740}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -2068,7 +2068,7 @@
 			</array>
 		</dict>
 		<string>IDEEditor</string>
-		<real>500</real>
+		<real>493</real>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -2189,7 +2189,7 @@
 			</array>
 		</dict>
 		<string>IDEWorkspaceTabController_300B8C2A-0A41-4EC1-A8BD-BF3AF2F541D5</string>
-		<string>{{163, 294}, {600, 666}}</string>
+		<string>{{127, 172}, {600, 666}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -3606,7 +3606,7 @@
 			</array>
 		</dict>
 		<string>IDEWorkspaceTabController_F5A2EB43-00BD-4BC7-844D-49067AC91FC0</string>
-		<string>{{142, 319}, {600, 664}}</string>
+		<string>{{110, 188}, {600, 664}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -6524,7 +6524,7 @@
 				</dict>
 			</array>
 		</dict>
-		<real>334706294.861323</real>
+		<real>334762022.86295998</real>
 		<string>{0, 372}</string>
 		<string>{369, 0}</string>
 		<dict>
@@ -7846,14 +7846,6 @@
 					<key>CF$UID</key>
 					<integer>2</integer>
 				</dict>
-				<dict>
-					<key>CF$UID</key>
-					<integer>4</integer>
-				</dict>
-				<dict>
-					<key>CF$UID</key>
-					<integer>3</integer>
-				</dict>
 			</array>
 		</dict>
 		<dict>
@@ -8164,7 +8156,7 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 5:58 PM</string>
+		<string>Yesterday at 5:58 PM</string>
 		<integer>234</integer>
 		<dict>
 			<key>$class</key>

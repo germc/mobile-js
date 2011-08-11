@@ -59,6 +59,12 @@ var Database = function(callback){
 			tx.executeSql("SELECT * FROM addresses", [], callback, this.databaseError);
 		}, this.databaseError);
 	};
+
+  this.getAddressById = function(id, callback){
+    this.db.transaction(function(tx){
+      tx.executeSql("SELECT * FROM addresses WHERE id = ?", [id], callback, this.databaseError);
+    }, this.databaseError);
+  };
 	
 	this.setDefaultAddress = function(id){
 		this.db.transaction(function(tx){

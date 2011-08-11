@@ -25,6 +25,7 @@
 <script type="text/javascript" charset="utf-8" src="handlers.js"></script>
 <script type="text/javascript" charset="utf-8" src='index.js'></script>
 <script type="text/javascript" charset="utf-8" src="script/database.js"></script>
+<script type="text/javascript" charset="utf-8" src="pages/accountInfo.js"></script>
 <!-- iPhone theme -->
 <link rel='stylesheet' href='css/styles.css' />
 <link rel="stylesheet" href="css/main.css" />
@@ -76,6 +77,14 @@
     </a>
   </li>
 </script>
+<script id='addressItemTemplate' type='text/x-jquery-tmpl'>
+  <li id='addressItem${id}' class='addressItem'>
+    <a>
+      <span class='addressString'>${address}</span>
+      <span class='addressDefault'>${default_str}</span>
+    </a>
+  </li>
+</script>
 </head>
 <body>
 	
@@ -96,7 +105,7 @@
              <a href="#" data-transition='flip' onclick='loadTray()'  id = "tray_btn" data-icon = "custom">Your Tray</a>
           </li>
 					<li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
-					<li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
+					<li><a href = "#accountInfo" id = "info_btn" data-transition='flip' data-icon = "custom">Your Info</a></li>
 				</ul>
 			</div>
 		</div>
@@ -198,7 +207,9 @@
       <h1>Your Info</h1>
     </div>
     <div data-role='content'>
-      
+     <div data-role="collapsible">
+       <ul data-role='listview' id='addressList'>
+       </ul> 
     </div>
   </div>
 
@@ -277,6 +288,10 @@
         <div class='formInput'>
           <div class = 'formLabel'>Email Address</div>
           <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "orderEmail"></input></div>
+				</div>
+        <div class='formInput'>
+          <div class = 'formLabel'>Password for new Ordr.in account</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderPassword"></input></div>
 				</div>
         <div class='formInput'>
           <div class='formLabel'>Password for future orders</div>

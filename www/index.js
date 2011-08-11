@@ -94,6 +94,12 @@ $(window).load(function(){
   $("#menuExtras").bind("pagebeforeshow", function(){
     $("#optionsList").listview("refresh");
   });
+  $("#accountInfo").bind("pagebeforeshow", function(){
+    AccountInfo.init();
+  });
+  $("#accountInfo").bind("pagehide", function(){
+    AccountInfo.cleanup();
+  });
 
    $("#restaurantSelectorParent").removeClass("ui-btn ui-btn-corner-all ui-shadow ui-btn-up-a");
    $("#restaurantSelectorParent>.ui-btn-inner").removeClass("ui-btn-inner");
@@ -527,7 +533,7 @@ function checkout(){
   var creditPlace = new Address($("#creditCardBilling").val(), "", $("#creditCardCity").val(), $("#creditCardZip").val(),
                                 $("#creditCardState").val(), $("#orderPhone").val(), "home");
   place.phone     = $("#orderPhone").val();
-  Ordrin.o.submit(currRest.restaurant_id, tray_str, tip, time, $("#orderEmail").val(), 
+  Ordrin.o.submit(currRest.restaurant_id, tray_str, tip, time, $("#orderEmail").val(), $("#orderPassword").val(),
                   $("#orderFirstName").val(), $("#orderLastName").val(), place, 
                   $("#creditCardName").val(), $("#creditCardNumber").val(), $("#creditCardCvc").val(), 
                   $("#creditCardExpirationMonth").val() + "/" + $("#creditCardExpirationYear").val(),

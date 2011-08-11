@@ -610,3 +610,12 @@ body{
   text-align: right;
   padding-right: 18px;
 }
+/* Account Info Page */
+.addressString{
+  color: #f6f5f1;
+  font-weight: normal;
+}
+.addressDefault{
+  font-size: 14px;
+  padding-top: 2px;
+}
