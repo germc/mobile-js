@@ -1,5 +1,6 @@
 <!--
 	TODO: The footer is implemented but has some bugs, we should probbably switch over to using iScroll(http://cubiq.org/iscroll-4) 
+        All pages should be refactored into the OO method that is in use for the manageAccount anc address scenes so that the app logic is not all contained in index.js
 -->
 <!DOCTYPE HTML>
 <html>
@@ -26,6 +27,9 @@
 <script type="text/javascript" charset="utf-8" src='index.js'></script>
 <script type="text/javascript" charset="utf-8" src="script/database.js"></script>
 <script type="text/javascript" charset="utf-8" src="pages/accountInfo.js"></script>
+<script type="text/javascript" charset="utf-8" src="pages/editAddress.js"></script>
+<script type='text/javascript' charset='utf-8' src='pages/manageAddresses.js'></script>
+<script type='text/javascript' charset='utf-8' src='pages/changeAddress.js'></script>
 <!-- iPhone theme -->
 <link rel='stylesheet' href='css/styles.css' />
 <link rel="stylesheet" href="css/main.css" />
@@ -80,8 +84,8 @@
 <script id='addressItemTemplate' type='text/x-jquery-tmpl'>
   <li id='addressItem${id}' class='addressItem'>
     <a>
-      <span class='addressString'>${address}</span>
-      <span class='addressDefault'>${default_str}</span>
+      <div class='addressString'>${address}</div>
+      <div class='addressDefault'>${default_str}</div>
     </a>
   </li>
 </script>
@@ -185,6 +189,8 @@
           <div class='trayPriceNumber' id='trayTotal'></div>
         </div>
       </div>
+      <select id='trayCreditCard'>
+      </select>
       <a data-role='button' onclick='prepareOrder();'>Order</a>
     </div> 
     <div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
@@ -205,11 +211,36 @@
   <div data-role='page' id='accountInfo'>
     <div data-role='header'>
       <h1>Your Info</h1>
+      <a href='' data-direction="reverse" id='accountInfoBack_btn' data-icon="arrow-l">Back</a>
     </div>
     <div data-role='content'>
-     <div data-role="collapsible">
-       <ul data-role='listview' id='addressList'>
-       </ul> 
+      <div id='currentAddress'>
+        <div class='addressString'></div>
+      </div>
+      <div data-role='button' id='changeAddress_btn'>Change Address</div>
+      <div data-role='button' id='manageAddresses_btn'>Manage Addresses</div>
+    </div>
+  </div>
+  <div data-role='page' data-accountInfo="true" id='manageAddresses'>
+    <div data-role='header'>
+      <h1>Addresses</h1>
+      <a href='#accountInfo' data-direction="reverse" data-icon='arrow-l'>Your Info</a>`
+    </div>
+    <div data-role='content'>
+      <ul data-role='listview' id='manageAddressesList'>
+      </ul>
+      <div data-role='button' id='addAddress_btn'>Add</div>
+    </div>
+  </div>
+  <div data-role='page' id='changeAddress' data-accountInfo="true">
+    <div data-role='header'>
+      <h1>Change Address</h1>
+      <a href='#accountInfo' data-direction="reverse" data-icon="arrow-l">Your Info</a>
+    </div>
+    <div data-role='content'>
+      <ul data-role='listview' id='changeAddressList'>
+      </ul>
+      <div data-role='button' id='addAddress_btn'>New</div>
     </div>
   </div>
 
@@ -291,11 +322,11 @@
 				</div>
         <div class='formInput'>
           <div class = 'formLabel'>Password for new Ordr.in account</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderPassword"></input></div>
+          <div class='inputContainer'><input type="password" data-role='none' name="zip" id="orderPassword"></input></div>
 				</div>
         <div class='formInput'>
-          <div class='formLabel'>Password for future orders</div>
-          <div class='inputContainer'><input type='text' data-role='none' id="orderPassword"></input></div>
+          <div class='formLabel'>Confirm</div>
+          <div class='inputContainer'><input type='password' data-role='none'></input></div>
         </div>
         <div class='formInput'>
           <div class = 'formLabel'>Phone Number</div>
@@ -361,6 +392,10 @@
 		</div>
 	</div>
 	<div data-role = "page" id = "createAddress">
+    <div data-role='header' class='hidden'>
+      <h1>Edit Address</h1>
+      <a href="#" data-rel="back"data-icon="arrow-l">Your Info</a>
+    </div>
 		<div data-role = "content">
 			<img class = 'headerImg' src = 'images/logo-small.png' />
 			<p id = "createAddressHeader"></p>

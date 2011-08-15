@@ -87,19 +87,13 @@ $(window).load(function(){
     user: "https://u-test.ordr.in",
     order: "https://o-test.ordr.in"
   }); 
-  //Ordrin.initialize("key", "localhost/ordrin");
-  /*$("#extrasOverview").bind("pagebeforeshow pageshow", function(){
-    $("#extrasList").listview("refresh");
-  });*/
   $("#menuExtras").bind("pagebeforeshow", function(){
     $("#optionsList").listview("refresh");
   });
-  $("#accountInfo").bind("pagebeforeshow", function(){
-    AccountInfo.init();
-  });
-  $("#accountInfo").bind("pagehide", function(){
-    AccountInfo.cleanup();
-  });
+  addPageListeners("#accountInfo", AccountInfo);
+  addPageListeners("#manageAddresses", ManageAddresses);
+  addPageListeners("#changeAddress", ChangeAddress);
+  //addPageListeners("#editAddress");
 
    $("#restaurantSelectorParent").removeClass("ui-btn ui-btn-corner-all ui-shadow ui-btn-up-a");
    $("#restaurantSelectorParent>.ui-btn-inner").removeClass("ui-btn-inner");
@@ -134,7 +128,6 @@ $(window).load(function(){
 });
 
 function getAddresses(default_bool){
-	//var storedAddress = JSON.parse(storage.getItem("address"));
 	if (default_bool){
 		db.getDefaultAddress(currUser.email, function(tx, results){
 			if (results.rows.length == 0){
@@ -162,11 +155,11 @@ function getAddresses(default_bool){
 											});
 							 }
 					});
-
 			 }else{
          // the user has a default address so move on to restaurants
          var item = results.rows.item(0);
          place = new Address(item.street, item.street2, item.city, item.zip, item.state, item.phone, "");
+         place.id = item.id
          time  = new Date();
          time.setASAP();
          getRestaurantList(false);
@@ -252,8 +245,10 @@ function getRestaurantList(storePlace){
     $.mobile.pageLoading(true);
 	})
   if (storePlace){
-    db.storeAddress(place.street, place.street2, place.city, place.zip, place.state, place.phone, place.nice,
-                    "true", "guest", function(){});
+    db.storeAddress(place.street.replace(/\+/g, " "), place.street2.replace(/\+/g, " "), place.city.replace(/\+/g, " "), place.zip.replace(/\+/g, " "), place.state.replace(/\+/g, " "), place.phone.replace(/\+/g, " "), place.nick,
+                    "true", "guest", function(tx, results){
+                        place.id = results.insertId;
+                      });
   }
 }
 
@@ -486,6 +481,34 @@ function loadTray(){
     tray.items[i].index = i;
   }
   $("#trayItemTemplate").tmpl(tray.items).appendTo("#trayList");
+  if (currUser.email == "guest")
+    $("#trayCreditCard").parent.parent.hide(); // hide the credit card selector if it is a guest account
+  else{
+    db.getAllCreditCards(currUser.email, function(tx, results){
+      if (results.rows.length == 0){
+        $("#trayCreditCard").parent.parent.hide(); // hide the credit card selector because the user has no credit cards 
+      }else{
+        var creditCardTypes = {
+          "ax": "American Express",
+          "di": "Discover",
+          "mc": "Mastercard",
+          "vi": "Visa"
+        };
+        $("#trayCreditCard").empty();
+        for (var i = 0; i < results.rows.length; i++){
+          var item = {
+            id: results.rows.item(i).id,
+            lastFourDigits: results.rows.item(i).number.substr(-4),
+            type: creditCardTypes[results.rows.item(i).type]
+          }
+          $.tmpl("<option value=${id}>${type} ending in ${lastFourDigits}</option>", item).appendTo("#trayCreditCard");
+          if (results.rows.item(i).defaultCard)
+            $("#trayCreditCard").val(item.id);
+        }
+        $("#trayCreditCard").selectmenu("refresh");
+      }
+    });
+  }
   $.mobile.changePage("#tray", {
     transition: "flip"
   });
@@ -524,6 +547,30 @@ function prepareOrder(){
     $.mobile.changePage("#checkout", {
       transition: "slidedown"
     });
+  }else{
+    // this is a regular account so check to see if we have their credit card information
+    db.getDefaultCreditCard(currUser.email, function(tx, results){
+      if (results.rows.length == 0){
+        // this is a regular account with no credit card so go to the checkout page
+        $.mobile.changePage("#checkout", {
+          transition: "slidedown"
+        }); //TODO: get rid of the email and password fields for registered users
+      }else{
+        $.mobile.pageLoading();
+        var creditId = $("#trayCreditCard").val(); 
+        db.getCreditCardById(creditId, function(tx, results){
+          var creditCard  = results.rows.item(0);
+          var tray_str = orderTray();
+          var creditPlace = new Address(creditCard.bill_addr, creditCard.bill_addr2, creditCard.bill_city, creditCard.bill_zip,
+                                        creditCard.bill_state, place.phone, "");
+          Ordrin.o.submit(currRest.restaurant_id, tray_str, new Money($("#tip").val()), time, currUser.email, "", 
+                          creditCard.name, place, creditCard.number, creditCard.cvc, creditCard.expiry, creditPlace,
+                          "", "", function(data){
+                            console.log("order placed", data);
+                          });
+        });
+      }
+    });
   }
 }
 
@@ -540,6 +587,19 @@ function checkout(){
                   creditPlace, "", "", function(data){
                     console.log("order placed", data);
                   });
+  if ($("#orderPassword").val()){
+    db.updateAccount(currUser.email, $("#orderEmail").val(), $("#orderPassword").val());
+    currUser.email = $("#orderEmail").val();
+    currUser.pass  = $("#orderPassword").val();
+  }
+  db.storeCreditCard($("#cardType_select").val(), $("#creditCardName").val(), $("#creditCardNumber").val(), $("#creditCardCvc").val(),
+                     $("#creditCardExpirationMonth").val() + '/' + $("#creditCardExpirationYear").val(),
+                     $("#creditCardBilling").val(), "", $("#creditCardCity").val(), $("#creditCardState").val(),
+                     $("#creditCardZip").val(), true, currUser.email);
+  db.getAddressById(place.id, function(tx, results){
+    var address = results.rows.item(0);
+    db.updateAddress(address.id, address.street, address.city, address.state, address.zip, $("#orderPhone").val(), currUser.email);
+  });
 }
 
 function orderTray(){
@@ -554,4 +614,13 @@ function orderTray(){
     tray_str += tray.items[i].id + "/" + tray.items[i].quantity + options; 
   }
   return tray_str;
+}
+
+function addPageListeners(id, object){
+  $(id).bind("pagebeforeshow", function(event, ui){
+    object.init(ui.prevPage);
+  });
+  $(id).bind("pagehide", function(){
+    object.cleanup();
+  });
 }
