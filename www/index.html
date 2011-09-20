@@ -1,105 +1,120 @@
-<!--
-  TODO: The footer is implemented but has some bugs, we should probbably switch over to using iScroll(http://cubiq.org/iscroll-4)
--->
-<!DOCTYPE HTML>
+<!DOCTYPE html>
+
 <html>
-<head>
-  <title>iPhone</title>
-<!-- Phone Gap JS -->
-<script type="text/javascript" charset="utf-8" src="phonegap.0.9.6.min.js"></script>
+  <head>
+    <title>OrdrIn Mobile</title>
+    <!-- Phone Gap JS -->
+    <script type="text/javascript" charset="utf-8" src="script/phonegap.0.9.6.min.js"></script>
+
+    <!-- Ordr.in JS Api
+    <script src="script/Address.js"></script>
+    <script src="script/DateTime.js"></script>
+    <script src="script/Money.js"></script>
+    <script src="script/Ordrin.js"></script>
+    -->
+
+    <!-- Jquery Mobile -->
+   <script src="script/jquery.js"></script>
+   <script src="script/jquery.tmpl.js"></script>
+   <script src="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.js"></script>
+   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
+
+    <!-- Google Maps API -->
+
+    <script type="text/javascript" charset="utf-8" src="script/footer.js"></script>
+    <script type="text/javascript" charset="utf-8" src="script/handlers.js"></script>
+    <script type="text/javascript" charset="utf-8" src='script/index.js'></script>
+    <script type="text/javascript" charset="utf-8" src="script/database.js"></script>
 
 
-<!-- Ordr.in JS Api -->
-<script type="text/javascript" src="script/Address.js"></script>
-<script type="text/javascript" src="script/DateTime.js"></script>
-<script type="text/javascript" src="script/Money.js"></script>
-<script type="text/javascript" src="script/Ordrin.js"></script>
-<!-- Jquery Mobile -->
-<script type="text/javascript" src="script/jquery.js"></script>
-<script src="script/jquery.tmpl.js"></script>
-<script src="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.js"></script>
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
-<!-- Google Maps API -->
-<script src= "script/maps.js" type="text/javascript"></script>
-<!-- Application logic -->
-<script type="text/javascript" charset="utf-8" src="handlers.js"></script>
-<script type="text/javascript" charset="utf-8" src='index.js'></script>
-<script type="text/javascript" charset="utf-8" src="script/database.js"></script>
-<!-- iPhone theme -->
-<link rel='stylesheet' href='css/styles.css' />
-<link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/defaults.css" />
+    <!-- Mobile theme -->
+    <!--<link rel='stylesheet' href='css/styles.css' />
+    <link rel="stylesheet" href="css/main.css" />
+    -->
 
-<!-- templates for rendering dynamic ajax content -->
-<script id="restListTemplate" type="text/x-jquery-tmpl">
-  <li class = 'restaurantListItem ui-btn ui-btn-icon-right' id = 'restaurant${index}'>
-    <span onclick="getRestDetails('${index}')" class = "ui-link-inherit " style = 'width: 85%'>
-      <h3 style="width:75%; white-space:normal">${na}</h3>
-      <p class = 'cuisineList'>${cuisines}</p>
-      <p>${ad}</p>
-      {{if is_del}}
-        <p><strong>Delivering Now</strong></p>
-      {{else}}
-        <p>Not Delivering</p>
-      {{/if}}
-    </span>
-    <span class="ui-icon ui-icon-arrow-r"></span>
-  </li>
-</script>
-<script id="menuListTemplate" type="text/x-jquery-tmpl">
-  <li class='ui-btn ui-btn-icon-right typeMenu' id="menu${index}">
-    <b>${name}</b>
-  </li>
-</script>
-<script id="menuItemTemplate" type="text/x-jquery-tmpl">
-  <li class = 'typeItem ui-btn ui-btn-icon-right' id="item${id}">
-    <div style="width:80%; white-space:normal">
-      <h3>${name}</h3>
-      <p style="white-space: normal;">${descrip}</p>
-    </div>
-    <p class="ui-li-aside" style="float:right; padding-top:8px; width: 20%;">$${price}</p>
-    <span class="ui-icon ui-icon-arrow-r"></span>
-  </li>
-</script>
-<script id="extrasTemplate" type="text/x-jquery-tmpl">
-  <li id='option${id}' class='optionBox'>
-    ${name}<span class='displayPrice'>${displayPrice}</span>
-    <img class="checkmarck ${checked} " src="images/checkbox.png" />
-  </li>
-</script>
-<script id='trayItemTemplate' type="text/x-jquery-tmpl">
-  <li id='trayItem${id}' class='trayItem'>
-    <a onclick='editTrayItem(${index})'>
-      <p class='itemName'>${name}</p>
-      <p class='itemDescrip'>${descrip}</p>
-      <p class='extrasList'>${extras_str}</p>
-      <span class='ui-li-count'>${quantity}</span>
-    </a>
-  </li>
-</script>
-</head>
+    <!-- templates for rendering dynamic ajax content -->
+    <script id="restListTemplate" type="text/x-jquery-tmpl">
+      <li class='restaurantListItem ui-btn ui-btn-icon-right' id='restaurant${index}'>
+        <span onclick="getRestDetails('${index}')" class="ui-link-inherit" style='width: 85%'>
+          <h3 style="width:75%; white-space:normal">${na}</h3>
+          <p class='cuisineList'>${cuisines}</p>
+          <p>${ad}</p>
+          {{if is_del}}
+            <p><strong>Delivering Now</strong></p>
+          {{else}}
+            <p>Not Delivering</p>
+          {{/if}}
+        </span>
+        <span class="ui-icon ui-icon-arrow-r"></span>
+      </li>
+    </script>
+
+    <script id="menuListTemplate" type="text/x-jquery-tmpl">
+      <li class='ui-btn ui-btn-icon-right typeMenu' id="menu${index}">
+        <b>${name}</b>
+      </li>
+    </script>
+
+    <script id="menuItemTemplate" type="text/x-jquery-tmpl">
+      <li class='typeItem ui-btn ui-btn-icon-right' id="item${id}">
+        <div style="width:80%; white-space:normal">
+          <h3>${name}</h3>
+          <p style="white-space: normal;">${descrip}</p>
+        </div>
+        <p class="ui-li-aside" style="float:right; padding-top:8px; width: 20%;">$${price}</p>
+        <span class="ui-icon ui-icon-arrow-r"></span>
+      </li>
+    </script>
+
+    <script id="extrasTemplate" type="text/x-jquery-tmpl">
+      <li id='option${id}' class='optionBox'>
+        ${name}<span class='displayPrice'>${displayPrice}</span>
+        <img class="checkmarck ${checked} " src="images/checkbox.png" />
+      </li>
+    </script>
+
+    <script id='trayItemTemplate' type="text/x-jquery-tmpl">
+      <li id='trayItem${id}' class='trayItem'>
+        <a onclick='editTrayItem(${index})'>
+          <p class='itemName'>${name}</p>
+          <p class='itemDescrip'>${descrip}</p>
+          <p class='extrasList'>${extras_str}</p>
+          <span class='ui-li-count'>${quantity}</span>
+        </a>
+      </li>
+    </script>
+
+    <script id="footerTemplate" type="text/x-jquery-tmpl">
+      <div data-role="footer" class="mainFooter" data-position="fixed" data-id="mainFooter">
+        <div data-role="navbar" class="mainFooter">
+          <ul>
+            <li><a href="#restaurant" id="home_btn" data-icon="home">Home</a></li>
+            <li>
+               <div class='circle trayCount'></div>
+               <a href="#tray" id="tray_btn" data-icon="custom">Your Tray</a>
+            </li>
+            <li><a href="#history" id="history_btn" data-icon="orders">Orders</a></li>
+            <li><a href="#settings" id="info_btn" data-icon="settings">Your Info</a></li>
+          </ul>
+        </div>
+      </div>
+    </script>
+  </head>
 <body>
 
-  <div data-role = "page" id = "restaurant">
-    <div data-id = 'header' data-role = "header">
+  <div data-role="page" id="restaurant">
+    <div data-id='header' data-role="header">
       <h1>Restaurants</h1>
     </div>
-    <div data-role = "content">
-      <ul data-role="listview" id="restList" data-filter = 'true'>
+    <div data-role="content">
+      <ul data-role="listview" id="restList" data-filter='true'>
       </ul>
     </div>
-    <div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
-      <div data-role = "navbar" class = "mainFooter">
-        <ul>
-          <li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
-          <li>
-             <div class='circle trayCount'><p class='innerCount'>1</p></div>
-             <a href="#" data-transition='flip' onclick='loadTray()'  id = "tray_btn" data-icon = "custom">Your Tray</a>
-          </li>
-          <li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
-          <li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
-        </ul>
-      </div>
-    </div>
+
+    <script>
+      $('#restaurant').footer();
+    </script>
   </div>
 
   <div data-role='page' id='timePicker'>
@@ -178,19 +193,10 @@
       </div>
       <a data-role='button' onclick='prepareOrder();'>Order</a>
     </div>
-    <div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
-      <div data-role = "navbar" class = "mainFooter">
-        <ul>
-          <li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
-          <li>
-             <div class='circle trayCount'><p class='innerCount'>1</p></div>
-            <a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a>
-          </li>
-          <li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
-          <li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
-        </ul>
-      </div>
-    </div>
+
+    <script>
+      $('#tray').footer();
+    </script>
   </div>
 
   <div data-role='page' id='checkout'>
@@ -198,9 +204,9 @@
       <h1>Checkout</h1>
     </div>
     <div data-role='content'>
-      <ul data-role = 'listview' class = 'formGroup' data-inset = 'true'>
-        <div class = 'formInput'>
-          <div class = 'formLabel'>Card Type:</div>
+      <ul data-role='listview' class='formGroup' data-inset='true'>
+        <div class ='formInput'>
+          <div class='formLabel'>Card Type:</div>
           <div class='selectBox'>
             <select data-role='none' id='cardType_select'>
               <option value='ax'>American Express</option>
@@ -210,12 +216,12 @@
             </select>
           </div>
         </div>
-        <div  class = 'formInput'>
-          <div class = 'formLabel'>Card Number:</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "city" id ="creditCardNumber"></input></div>
+        <div  class='formInput'>
+          <div class='formLabel'>Card Number:</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="city" id ="creditCardNumber"></input></div>
         </div>
-        <div  class = 'formInput'>
-          <div class = "formLabel">Expiration Date:</div>
+        <div  class='formInput'>
+          <div class="formLabel">Expiration Date:</div>
           <div class='selectBox'>
             <select data-role='none' id='creditCardExpirationMonth' value='month'>
               <option value='month'>Month</option>
@@ -242,225 +248,202 @@
           </div>
         </div>
         <div class='formInput'>
-          <div class = 'formLabel'>Security Code</div>
-           <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardCvc"></input></div>
+          <div class='formLabel'>Security Code</div>
+           <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardCvc"></input></div>
         </div>
         <div class='formInput'>
-          <div class = 'formLabel'>Name on Credit Card</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardName"></input></div>
+          <div class='formLabel'>Name on Credit Card</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardName"></input></div>
         </div>
         <div class='formInput'>
-          <div class = 'formLabel'>Billing Address</div>
-          <div class='inputContainer'><input type = "text" data-role='none' name="zip" id="creditCardBilling"></input></div>
+          <div class='formLabel'>Billing Address</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardBilling"></input></div>
         </div>
         <div class='formInput'>
-          <div class = 'formLabel'>City</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardCity"></input></div>
+          <div class='formLabel'>City</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardCity"></input></div>
         </div>
         <div class='formInput'>
           <div class='formLabel'>State</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardState"></input></div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardState"></input></div>
         </div>
         <div class='formInput'>
-          <div class = 'formLabel'>Zip</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "creditCardZip"></input></div>
+          <div class='formLabel'>Zip</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardZip"></input></div>
         </div>
         <div class='formInput'>
-          <div class = 'formLabel'>Email Address</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "orderEmail"></input></div>
+          <div class='formLabel'>Email Address</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderEmail"></input></div>
         </div>
         <div class='formInput'>
-          <div class = 'formLabel'>Phone Number</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "orderPhone"></input></div>
+          <div class='formLabel'>Phone Number</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderPhone"></input></div>
         </div>
         <div class='formInput'>
-          <div class = 'formLabel'>First Name</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "orderFirstName"></input></div>
+          <div class='formLabel'>First Name</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderFirstName"></input></div>
         </div>
         <div class='formInput'>
-          <div class = 'formLabel'>Last Name</div>
-          <div class='inputContainer'><input type = "text" data-role='none' name="zip" id="orderLastName"></input></div>
+          <div class='formLabel'>Last Name</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderLastName"></input></div>
         </div>
-        <div data-role = "button" id = "checkout_btn" data-icon = "check">Go</div>
+        <div data-role="button" id="checkout_btn" data-icon="check">Go</div>
       </ul>
     </div>
   </div>
 
-  <div data-role = "page" id = "login">
-    <div data-role = "header"><h1>Please Login</h1></div>
-    <div data-role = "content">
+  <div data-role="page" id="login">
+    <div data-role="header"><h1>Please Login</h1></div>
+    <div data-role="content">
       <div >
-        <label for = "email" class = "ui-input-text">Email: </label>
-        <input type = "text" name = "email" id = "loginEmail"></input>
+        <label for="email" class="ui-input-text">Email: </label>
+        <input type="text" name="email" id="loginEmail"></input>
       </div>
       <div >
-        <label for = "password" class = "ui-input-text">Password: </label>
-        <input type = 'password' name = 'password' id = "loginPassword"></input>
+        <label for="password" class="ui-input-text">Password: </label>
+        <input type='password' name='password' id="loginPassword"></input>
       </div>
-      <div data-role = "button" id = "login_btn" data-icon = "check">Login</div>
-      <a data-role = "button" id = "createAccount_btn" data-rel = "dialog" href = "#createAccount" data-transition = "slidedown" data-icon = "plus">Create Account</a>
+      <div data-role="button" id="login_btn" data-icon="check">Login</div>
+      <a data-role="button" id="createAccount_btn" data-rel="dialog" href="#createAccount" data-transition="slidedown" data-icon="plus">Create Account</a>
     </div>
   </div>
-  <div data-role = "dialog" data-icon = "alert" id = "error">
-    <div data-role = "header"><h1>Error</h1></div>
-    <div data-role = "content">
-      <p id = "errorMsg"></p>
-      <a href = "#" data-role = "button" id = "errorClose_btn" data-icon = "check" data-rel = "back">Ok</a>
+  <div data-role="dialog" data-icon="alert" id="error">
+    <div data-role="header"><h1>Error</h1></div>
+    <div data-role="content">
+      <p id="errorMsg"></p>
+      <a href="#" data-role="button" id="errorClose_btn" data-icon="check" data-rel="back">Ok</a>
     </div>
   </div>
-  <div data-role = "page" id = "createAccount">
-    <div data-role = "header"><h1>New Account</h1></div>
-    <div data-role = "content">
-      <form action = "#" method = "get">
+
+  <div data-role="page" id="createAccount">
+    <div data-role="header"><h1>New Account</h1></div>
+    <div data-role="content">
+      <form action="#" method="get">
         <div >
-          <label for = "email" class = "ui-input-text">Email: </label>
-          <input type = "text" name = "email" id = "createEmail"></input>
-        </div>
-        <div >
-          <label for = "password"  class = "ui-input-text">Password: </label>
-          <input type = "password" name = "password" id = "createPassword"></input>
+          <label for="email" class="ui-input-text">Email: </label>
+          <input type="text" name="email" id="createEmail"></input>
         </div>
         <div >
-          <label for = "first"  class = "ui-input-text">First Name: </label>
-          <input type = "text" name = "first" id = "createFirstName"></input>
+          <label for="password"  class="ui-input-text">Password: </label>
+          <input type="password" name="password" id="createPassword"></input>
         </div>
-        <div data-role = ''>
-          <label for = "last"  class = "ui-input-text">Last Name: </label>
-          <input type = "text" name = "last" id = "createLastName"></input>
+        <div >
+          <label for="first"  class="ui-input-text">First Name: </label>
+          <input type="text" name="first" id="createFirstName"></input>
         </div>
-        <div data-role = "button" id = "postAccount_btn" data-icon = "check">Create</div>
+        <div data-role=''>
+          <label for="last"  class="ui-input-text">Last Name: </label>
+          <input type="text" name="last" id="createLastName"></input>
+        </div>
+        <div data-role="button" id="postAccount_btn" data-icon="check">Create</div>
       </form>
     </div>
   </div>
-  <div data-role = "page" id = "createAddress">
-    <div data-role = "content">
-      <img class = 'headerImg' src = 'images/logo-small.png' />
-      <p id = "createAddressHeader"></p>
-      <p id = "createAddressSub"></p>
-      <ul data-role = 'listview' class = 'formGroup' data-inset = 'true'>
-        <div class = 'formInput'>
-          <div class = 'formLabel'>Address:</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "addr" id = "createAddressAddress"></input></div>
+
+  <div data-role="page" id="createAddress">
+    <div data-role="content">
+      <img class='headerImg' src='images/logo-small.png' />
+      <p id="createAddressHeader"></p>
+      <p id="createAddressSub"></p>
+      <ul data-role='listview' class='formGroup' data-inset='true'>
+        <div class='formInput'>
+          <div class='formLabel'>Address:</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="addr" id="createAddressAddress"></input></div>
         </div>
-        <div  class = 'formInput'>
-          <div class = 'formLabel'>City:</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "city" id = "createAddressCity"></input></div>
+        <div  class='formInput'>
+          <div class='formLabel'>City:</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="city" id="createAddressCity"></input></div>
         </div>
-        <div  class = 'formInput'>
-          <div class = "formLabel">State:</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "state" id = "createAddressState"></input></div>
+        <div  class='formInput'>
+          <div class="formLabel">State:</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="state" id="createAddressState"></input></div>
         </div>
-        <div  class = 'formInput'>
-          <div class = 'formLabel'>Zip Code:</div>
-          <div class='inputContainer'><input type = "text" data-role = 'none' name = "zip" id = "createAddressZip"></input></div>
+        <div  class='formInput'>
+          <div class='formLabel'>Zip Code:</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="createAddressZip"></input></div>
         </div>
-        <div data-role = "button" id = "createAddress_btn" data-icon = "check">Create</div>
+        <div data-role="button" id="createAddress_btn" data-icon="check">Create</div>
         </ul>
       </div>
     </div>
 
-    <div data-role = "page" id = "settings">
-    <div data-id = 'header' data-role = 'header'>
-      <h1>Settings</h1>
-    </div>
-    <div data-role = 'content'>
-      <ul data-role = 'listview'>
-      </ul>
-    </div>
-    <div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
-      <div data-role = "navbar" class = "mainFooter">
-        <ul>
-          <li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
-          <li>
-             <div class='circle trayCount'><p class='innerCount'>1</p></div>
-            <a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a>
-          </li>
-          <li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
-          <li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
+    <div data-role="page" id="history">
+      <div data-id='header' data-role='header'>
+        <h1>Settings</h1>
+      </div>
+      <div data-role='content'>
+        <ul data-role='listview'>
         </ul>
       </div>
+
+      <script>
+        $('#history').footer();
+      </script>
     </div>
 
+    <div data-role="page" id="settings">
+      <div data-id='header' data-role='header'>
+        <h1>Settings</h1>
+      </div>
+      <div data-role='content'>
+        <ul data-role='listview'>
+        </ul>
+      </div>
+
+      <script>
+        $('#settings').footer();
+      </script>
   </div>
-  <div data-role = "page" id = "selectAddress">
-    <div data-role = "header"><h1>Select Address</h1></div>
-    <div data-role = "content">
-      <ul data-role = "listview" id = "addressList">
+
+  <div data-role="page" id="selectAddress">
+    <div data-role="header"><h1>Select Address</h1></div>
+    <div data-role="content">
+      <ul data-role="listview" id="addressList">
       </ul>
-    </div>
-    <div data-role="footer" class="mainFooter"  data-position="fixed" data-id="mainFooter">
-      <div data-role = "navbar" class = "mainFooter">
-        <ul>
-          <li><a href="#" id="home_btn" data-icon="custom">Home</a></li>
-          <li><a href="#" id="tray_btn" data-icon="custom">Your Tray</a></li>
-          <li><a href="#" id="history_btn" data-icon="custom">History</a></li>
-          <li><a href="#" id="info_btn" data-icon="custom">Your Info</a></li>
-        </ul>
-      </div>
     </div>
   </div>
   <div id="restDetails" data-role="page">
-    <div data-id = 'header' data-role="header">
+    <div data-id='header' data-role="header">
       <h1 class="restName"></h1>
-      <a href = "#restaurant"style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Restaurants</a>
+      <a href="#restaurant"style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Restaurants</a>
     </div>
     <div style="padding-top: 0" data-role="content">
-      <div id = 'restaurantInfo'>
-        <span style="width:75%; white-space:normal" class = "restName" id = 'restHeader'></span><br />
-        <span id = 'cuisineList'></span>
-        <span id = 'rAddress'></span><br />
+      <div id='restaurantInfo'>
+        <span style="width:75%; white-space:normal" class="restName" id='restHeader'></span><br />
+        <span id='cuisineList'></span>
+        <span id='rAddress'></span><br />
         <span>
-          <span class="left">Deliver in <span id = 'estimatedDelivery'></span></span>
-          <span class='right'>Minimum <span id = 'minimumDelivery'></span></span>
+          <span class="left">Deliver in <span id='estimatedDelivery'></span></span>
+          <span class='right'>Minimum <span id='minimumDelivery'></span></span>
         </span>
       </div>
-      <div style = "clear: both;"></div>
-      <div id = 'menuHeader'>Menu Sections</div>
+      <div style="clear: both;"></div>
+      <div id='menuHeader'>Menu Sections</div>
       <ul data-role="listview" id="menu">
       </ul>
     </div>
-    <div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
-      <div data-role = "navbar" class = "mainFooter">
-        <ul>
-          <li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
-          <li>
-             <div class='circle trayCount'><p class='innerCount'>1</p></div>
-            <a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a>
-          </li>
-          <li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
-          <li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
-        </ul>
-      </div>
-    </div>
-
-    </div>
+    <script type="text/javascript" charset="utf-8">
+      $('#restDetails').footer();
+    </script>
+  </div>
 
 
   <div id='menuItems' data-role='page'>
     <div data-role='header'>
       <h1>Items</h1>
-      <a href = "#restDetails" style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Menu</a>
+      <a href="#restDetails" style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Menu</a>
     </div>
     <div data-role='content'>
-      <div class = 'typeInfo typeItem'>
+      <div class='typeInfo typeItem'>
         <div class='typeName'></div> <br />
         <div class="typeDescrip"></div>
       </div>
-      <ul id='menuItemList' data-role='listview' class = 'foodItems'>
+      <ul id='menuItemList' data-role='listview' class='foodItems'>
       </ul>
     </div>
-    <div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
-      <div data-role = "navbar" class = "mainFooter">
-        <ul>
-          <li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
-          <li>
-             <div class='circle trayCount'><p class='innerCount'>1</p></div>
-            <a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a>
-          </li>
-          <li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
-          <li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
-        </ul>
-      </div>
+    <script>
+      $('#menuItems').footer();
+    </script>
     </div>
 
   </div>
@@ -468,10 +451,10 @@
   <div data-role="page" id="extrasOverview">
     <div data-role="header">
       <h1>Item</h1>
-      <a href = "#menuItems" style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Items</a>
+      <a href="#menuItems" style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Items</a>
     </div>
     <div data-role="content">
-      <p id = 'itemInfo'>
+      <p id='itemInfo'>
         <div id="itemName"></div>
         <div id="itemDescrip"></div>
       </p>
@@ -487,46 +470,28 @@
       </div>
       <img src='images/button-addtray-off.png' onclick='addCurrItemToTray()' class='centerButton'/>
     </div>
-      <div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
-      <div data-role = "navbar" class = "mainFooter">
-        <ul>
-          <li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
-          <li>
-             <div class='circle trayCount'><p class='innerCount'>1</p></div>
-            <a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a>
-          </li>
-          <li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
-          <li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
-        </ul>
-      </div>
-    </div>
+
+    <script>
+      $('#extrasOverview').footer();
+    </script>
 </div>
 
   <div data-role="page" id="menuExtras">
-    <div data-role = "header">
+    <div data-role="header">
       <h1 id="extrasHeader">Options</h1>
       <a href="#" data-rel="back" data-icon="arrow-l">Item</a>
     </div>
-    <div data-role = "content" id="optionsContent">
+    <div data-role="content" id="optionsContent">
     <div class='optionsTitle'></div>
       <ul id="optionsList" data-role='listview' data-inset="true">
       </ul>
       <br />
       <img id="submitExtras" src='images/button-done-off.png' class='centerButton' onclick="validateForm();" />
     </div>
-    <div data-role = "footer" class = "mainFooter"  data-position="fixed" data-id = "mainFooter">
-      <div data-role = "navbar" class = "mainFooter">
-        <ul>
-          <li><a href = "#" id = "home_btn" data-icon = "custom">Home</a></li>
-          <li>
-             <div class='circle trayCount'><p class='innerCount'>1</p></div>
-            <a href = "#" id = "tray_btn" data-icon = "custom">Your Tray</a>
-          </li>
-          <li><a href = "#" id = "history_btn" data-icon = "custom">History</a></li>
-          <li><a href = "#" id = "info_btn" data-icon = "custom">Your Info</a></li>
-        </ul>
-      </div>
-    </div>
+
+    <script>
+      $('#menuExtras').footer();
+    </script>
   </div>
 </body>
 </html>

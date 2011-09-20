@@ -1,0 +1,7 @@
+
+[data-role=footer] .ui-icon { background-repeat: no-repeat !important; -moz-border-radius: 0px; -webkit-border-radius: 0px; -khtml-border-radius: 0px; border-radius: 0px; height: 26px; width: 26px; background-position: 50% 50%; }
+
+[data-role=footer] .ui-icon-home { background: url(../images/icons/home.png); }
+[data-role=footer] .ui-icon-restaurants { background: url(../images/icons/restaurants.png); }
+[data-role=footer] .ui-icon-orders { background: url(../images/icons/orders.png); }
+[data-role=footer] .ui-icon-settings { background: url(../images/icons/settings.png); }
