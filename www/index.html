@@ -93,6 +93,18 @@
       </li>
     </script>
 
+    <script id="menuExtrasTemplate" type="text/x-jquery-tmpl">
+      <div data-role="header">
+        <h1 id="extrasHeader">${name}</h1>
+        <a href="#" data-rel="back" data-icon="arrow-l">Item</a>
+      </div>
+
+      <div data-role="content" id="optionsContent">
+        <ul id="optionsList" data-role='listview' data-inset="true"></ul>
+        <img id="submitExtras" src='images/button-done-off.png' class='centerButton' onclick="validateForm();" />
+      </div>
+    </script>
+
     <script id="extrasTemplate" type="text/x-jquery-tmpl">
       <li id='option${id}' class='optionBox'>
         ${name}<span class='displayPrice'>${displayPrice}</span>
@@ -495,13 +507,15 @@
   </div>
 
   <div id="restDetails" data-role="page">
+
+    <a href="#checkout">Order</a>
     <script>
       $('#restDetails').footer();
     </script>
   </div>
 
   <!--  -->
-  <div id='menuItems' data-role='page'>
+  <div id="menuItems" data-role="page">
     <div data-role='header'>
       <h1>Items</h1>
       <a href="#restDetails" data-direction='reverse' data-icon="arrow-l">Menu</a>
@@ -514,6 +528,8 @@
       <ul id='menuItemList' data-role='listview' class='foodItems'>
       </ul>
     </div>
+
+    <a href="#checkout">Order</a>
     <script>
       $('#menuItems').footer();
     </script>
@@ -524,42 +540,17 @@
       <h1>Item</h1>
       <a href="#menuItems" data-direction='reverse' data-icon="arrow-l">Items</a>
     </div>
+
     <div data-role="content">
-      <p id='itemInfo'>
-        <div id="itemName"></div>
-        <div id="itemDescrip"></div>
-      </p>
-      <ul id="extrasList" data-role='listview' data-inset="true">
-      </ul>
-      <div id="quantityPicker">
-        <div class='redInputLabel' id='quantityLabel'>Quantity</div>
-        <div id='quantityButtons'>
-          <img src='images/button-plus-off.png' class='quantity_btn' id='quantityUp_btn' />
-          <img src='images/button-minus-off.png' class='quantity_btn' id='quantityDown_btn' />
-        </div>
-        <input type='number' class='numberInput' id='extrasQuantity' value="1">
-      </div>
-      <img src='images/button-addtray-off.png' id='addToTray' class='centerButton'/>
+      <ul id="extrasList" data-role="listview"></ul>
     </div>
 
     <script>
       $('#extrasOverview').footer();
     </script>
-</div>
+  </div>
 
   <div data-role="page" id="menuExtras">
-    <div data-role="header">
-      <h1 id="extrasHeader">Options</h1>
-      <a href="#" data-rel="back" data-icon="arrow-l">Item</a>
-    </div>
-    <div data-role="content" id="optionsContent">
-    <div class='optionsTitle'></div>
-      <ul id="optionsList" data-role='listview' data-inset="true">
-      </ul>
-      <br />
-      <img id="submitExtras" src='images/button-done-off.png' class='centerButton' onclick="validateForm();" />
-    </div>
-
     <script>
       $('#menuExtras').footer();
     </script>

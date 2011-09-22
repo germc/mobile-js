@@ -7,55 +7,32 @@ function setCurrItem(){
         break;
       }
     }
+
   populateExtras();
 }
 
 function populateExtras(){
-  if (!currItem.extras){
-    currItem.extras     = {};
-    currItem.extras_str = "";
-  }
+
+  //if the item actually has extras, present those
   if (currItem.children) {
-    $("#itemName").html(currItem.name);
-    $("#itemDescrip").html(currItem.descrip);
-    $("#extrasList").empty();
-    for (i = 0; i < currItem.children.length; i++){
-      if (!currItem.extras[currItem.children[i].id]){
-        currItem.extras[currItem.children[i].id] = [];
-      }
-      $.tmpl("<li class='ui-btn ui-btn-icon-right' id='extra${id}' onclick='createExtrasPage(\"${index}\");'>${name}<div class='optionsList'></div><span class=\"ui-icon ui-icon-arrow-r\"></span></li>",
-             {name: currItem.children[i].name, index: i, id: currItem.children[i].id}).appendTo("#extrasList");
-    }
-    $.mobile.changePage("#extrasOverview");
-    $("#extrasOverview>div").filter(":first").children("a").attr("href", "#menuItems").children().children(".ui-btn-text").html("Items");
+    var data = JSON.parse(currItem.children)
+    $('#trayItemTemplate').tmpl(data).appendTo('#extrasList');
     $("#extrasList").listview("refresh");
-  }else{
+    $.mobile.changePage("#extrasOverview");
+  }
+  //the item has no extras to select, so just add it to tray
+  else {
     addCurrItemToTray();
-    $.mobile.changePage("#restDetails", {reverse: true});
+    $.mobile.changePage("#restDetails");
   }
 }
 
 function createExtrasPage(index){
-    currExtra = currItem.children[index];
-    var list = $("#optionsList"), checked = {};
-    list.empty();
-    $("#extrasHeader").html(currItem.name);
-    for (var i = 0; i < currItem.extras[currExtra.id].length; i++){
-      checked[currItem.extras[currExtra.id][i].id] = true;
-    }
-    for (i = 0; i < currItem.children[index].children.length; i++){
-      var node = currItem.children[index].children[i];
-      if (node.price == 0)
-         node.displayPrice  = "";
-      else
-          node.displayPrice = "+$" + node.price;
-      if (checked[node.id])
-         node.checked = "";
-      else
-         node.checked = "hidden";
-    }
-    $(".optionsTitle").html(currItem.children[index].name);
-    $("#extrasTemplate").tmpl(currItem.children[index].children).appendTo(list);
+    var data = JSON.parse(currItem)
+    var children = JSON.parse(currItem.children[index].children);
+
+    $('#menuExtrasTemplate').tmpl(data).appendTo('#menuExtras');
+    $("#extrasTemplate").tmpl(children).appendTo('#optionsList');
     $.mobile.changePage("#menuExtras");
 }
 

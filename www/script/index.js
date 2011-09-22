@@ -117,10 +117,6 @@ function openDialog(parent, name, transition){
   $("#removeMe").click().remove();
 }
 
-function storeUser(email, pass, defaultAccount){
-  db.storeAccount(email, pass, defaultAccount);
-}
-
 function error(msg, title, btnName){
   $.mobile.pageLoading(true);
   navigator.notification.alert(msg, null, title, btnName);

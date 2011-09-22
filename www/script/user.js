@@ -1,3 +1,6 @@
+function storeUser(email, pass, defaultAccount){
+  db.storeAccount(email, pass, defaultAccount);
+}
 
 function getAddresses(default_bool){
   //var storedAddress = JSON.parse(storage.getItem("address"));

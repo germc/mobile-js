@@ -13,7 +13,7 @@ function getRestaurantList(){
 
 function getRestaurantDetails(rid){
   Ordrin.r.details(rid, function(data){
-    data = JSON.parse(data);
+    var data = JSON.parse(data);
     $('#restDetails').html(null);
     $('#restDetailsTemplate').tmpl(data).appendTo('#restDetails');
   });
@@ -23,7 +23,7 @@ function getRestaurantDetails(rid){
 
 function changeDeliveryTime(){
  var date = $("#deliveryDate").val() + " " + $("#deliveryTime").val() + " " + $("#deliveryAmPm").val();
- time = new Date(date);
+ var time = new Date(date);
  $.mobile.activePage.dialog('close');
  getRestaurantList(false);
 }
