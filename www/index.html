@@ -6,12 +6,11 @@
     <!-- Phone Gap JS -->
     <script type="text/javascript" charset="utf-8" src="script/phonegap.0.9.6.min.js"></script>
 
-    <!-- Ordr.in JS Api
+    <!-- Ordr.in JS Api -->
     <script src="script/Address.js"></script>
     <script src="script/DateTime.js"></script>
     <script src="script/Money.js"></script>
     <script src="script/Ordrin.js"></script>
-    -->
 
     <!-- Jquery Mobile -->
    <script src="script/jquery.js"></script>
@@ -20,49 +19,76 @@
    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
 
     <!-- Google Maps API -->
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
 
     <script type="text/javascript" charset="utf-8" src="script/footer.js"></script>
     <script type="text/javascript" charset="utf-8" src="script/handlers.js"></script>
     <script type="text/javascript" charset="utf-8" src='script/index.js'></script>
     <script type="text/javascript" charset="utf-8" src="script/database.js"></script>
+    <script type="text/javascript" charset="utf-8" src="script/restaurant.js"></script>
+    <script type="text/javascript" charset="utf-8" src="script/tray.js"></script>
+    <script type="text/javascript" charset="utf-8" src="script/user.js"></script>
 
-
-    <link rel="stylesheet" href="css/defaults.css" />
     <!-- Mobile theme -->
-    <!--<link rel='stylesheet' href='css/styles.css' />
+    <link rel='stylesheet' href='css/styles.css' />
     <link rel="stylesheet" href="css/main.css" />
-    -->
+
+    <!-- Additional theming -->
+    <link rel="stylesheet" href="css/defaults.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <!--<link rel="stylesheet" href="css/restaurants.css" />
+    <link rel="stylesheet" href="css/settings.css" />-->
 
     <!-- templates for rendering dynamic ajax content -->
     <script id="restListTemplate" type="text/x-jquery-tmpl">
-      <li class='restaurantListItem ui-btn ui-btn-icon-right' id='restaurant${index}'>
-        <span onclick="getRestDetails('${index}')" class="ui-link-inherit" style='width: 85%'>
-          <h3 style="width:75%; white-space:normal">${na}</h3>
+      <li onclick="getRestaurantDetails(${id});" class='restaurantListItem ui-btn-icon-right' id="restaurant_${id}">
+        <span class="ui-link-inherit">
+          <h3>${na}</h3>
           <p class='cuisineList'>${cuisines}</p>
-          <p>${ad}</p>
+          <p class="address">${ad}</p>
           {{if is_del}}
             <p><strong>Delivering Now</strong></p>
           {{else}}
             <p>Not Delivering</p>
           {{/if}}
         </span>
-        <span class="ui-icon ui-icon-arrow-r"></span>
+        <span class="ui-icon-arrow-r"></span>
       </li>
     </script>
 
+    <script id="restDetailsTemplate" type="text/x-jquery-tmpl">
+      <div data-id='header' data-role="header">
+        <h1 class="restName">${name}</h1>
+      </div>
+      <div data-role="content">
+        <div id='restInfo'>
+          <span class="restName" id='restHeader'></span>
+          <span id='cuisineList'>${cuisines}</span>
+          <span id='rAddress'>${addr} ${city}, ${state} ${postal_code}</span>
+          <div>
+            <span class="left">Deliver in ${del}</span>
+            <span class='right'>Minimum ${mino}</span>
+          </div>
+        </div>
+        <div id='menuHeader'>Menu Sections</div>
+        <ul data-role="listview" id="restaurantMenu">
+        </ul>
+      </div>
+    </script>
+
     <script id="menuListTemplate" type="text/x-jquery-tmpl">
-      <li class='ui-btn ui-btn-icon-right typeMenu' id="menu${index}">
+      <li class='ui-btn ui-btn-icon-right typeMenu' id="menu_${index}">
         <b>${name}</b>
       </li>
     </script>
 
     <script id="menuItemTemplate" type="text/x-jquery-tmpl">
-      <li class='typeItem ui-btn ui-btn-icon-right' id="item${id}">
-        <div style="width:80%; white-space:normal">
+      <li class='typeItem ui-btn ui-btn-icon-right' id="item_${id}">
+        <div>
           <h3>${name}</h3>
-          <p style="white-space: normal;">${descrip}</p>
+          <p>${descrip}</p>
         </div>
-        <p class="ui-li-aside" style="float:right; padding-top:8px; width: 20%;">$${price}</p>
+        <p class="ui-li-aside">$${price}</p>
         <span class="ui-icon ui-icon-arrow-r"></span>
       </li>
     </script>
@@ -70,7 +96,7 @@
     <script id="extrasTemplate" type="text/x-jquery-tmpl">
       <li id='option${id}' class='optionBox'>
         ${name}<span class='displayPrice'>${displayPrice}</span>
-        <img class="checkmarck ${checked} " src="images/checkbox.png" />
+        <img class="checkmark ${checked}" src="images/checkbox.png">
       </li>
     </script>
 
@@ -82,6 +108,19 @@
           <p class='extrasList'>${extras_str}</p>
           <span class='ui-li-count'>${quantity}</span>
         </a>
+      </li>
+    </script>
+
+    <script id="settingsTemplate" type="text/x-jquery-tmpl">
+      <div data-role="controlgroup">
+        <a href="editBasic" data-role="button">Basic Info</a>
+        <a href="editAddresses" data-role="button">Addresses</a>
+      </div>
+    </script>
+
+    <script id="addressSelectorTemplate" type="text/x-jquery-tmpl">
+      <li class="addressSelector">
+        <a href='#restaurant'>${nick}</a>
       </li>
     </script>
 
@@ -102,13 +141,69 @@
     </script>
   </head>
 <body>
+  <div id="fb-root"></div>
+  <script src="http://connect.facebook.net/en_US/all.js"></script>
+  <script>
+    window.fbAsyncInit = function() {
+     FB.init({
+      appId  : '237640389617454',
+      status : true, // check login status
+      cookie : true, // enable cookies to allow the server to access the session
+      xfbml  : true, // parse XFBML
+      oauth  : true // enable OAuth 2.0
+    });
+    };
+    (function(d){
+       var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+       js = d.createElement('script'); js.id = id; js.async = true;
+       js.src = "//connect.facebook.net/en_US/all.js";
+       d.getElementsByTagName('head')[0].appendChild(js);
+     }(document));
+  </script>
 
-  <div data-role="page" id="restaurant">
+<!-- These are the pages:
+  #home
+  #error
+  #restList
+  #timePicker
+  #tray
+  #checkout
+  #createAccount
+  #createAddress
+  #history
+  #settings
+  #selectAddress
+  #restDetails
+  #menuItems
+  #extrasOverview
+  #menuExtras
+-->
+
+  <div data-role="page" id="home">
+    <div id="container">
+      <div data-role="content">
+        <img id="logo" src="images/logo.png" alt="OrdrIn Logo" />
+        <div>
+          <div class="fb-login-button" data-size="xlarge">Login with Facebook</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-role="dialog" data-icon="alert" id="error">
+    <div data-role="header"><h1>Error</h1></div>
+    <div data-role="content">
+      <p id="errorMsg"></p>
+      <a href="#" data-role="button" id="errorClose_btn" data-icon="check" data-rel="back">Ok</a>
+    </div>
+  </div>
+
+  <div data-role="page" id="restList">
     <div data-id='header' data-role="header">
-      <h1>Restaurants</h1>
+      <h1>Restaurants Delivering To</h1>
     </div>
     <div data-role="content">
-      <ul data-role="listview" id="restList" data-filter='true'>
+      <ul data-role="listview" id="restaurantList">
       </ul>
     </div>
 
@@ -121,39 +216,46 @@
     <div data-role='content'>
       <p class='planBlack_txt'>
         The restaurant is not open now. Please select a time between <span id='deliverTimeOptions'></span>
-      <p>
+      </p>
       <select id='deliveryDate'>
       </select>
-      <select id='deliveryTime'>
-        <option value='01:00'>1:00</option>
-        <option value='01:30'>1:30</option>
-        <option value='02:00'>2:00</option>
-        <option value='02:30'>2:30</option>
-        <option value='03:00'>3:00</option>
-        <option value='03:30'>3:30</option>
-        <option value='04:00'>4:00</option>
-        <option value='04:30'>4:30</option>
-        <option value='05:00'>5:00</option>
-        <option value='05:30'>5:30</option>
-        <option value='06:00'>6:00</option>
-        <option value='06:30'>6:30</option>
-        <option value='07:00'>7:00</option>
-        <option value='07:30'>7:30</option>
-        <option value='08:00'>8:00</option>
-        <option value='08:30'>8:30</option>
-        <option value='09:00'>9:00</option>
-        <option value='09:30'>9:30</option>
-        <option value='10:00'>10:00</option>
-        <option value='10:30'>10:30</option>
-        <option value='11:00'>11:00</option>
-        <option value='11:30'>11:30</option>
-        <option value='12:00'>12:00</option>
-        <option value='12:30'>12:30</option>
-      </select>
-      <select id='deliveryAmPm'>
-        <option value='am'>AM</option>
-        <option value='pm'>PM</option>
-      </select>
+
+      <div data-role="fieldcontain">
+        <select id='deliveryTime'>
+          <option value='01:00'>1:00</option>
+          <option value='01:30'>1:30</option>
+          <option value='02:00'>2:00</option>
+          <option value='02:30'>2:30</option>
+          <option value='03:00'>3:00</option>
+          <option value='03:30'>3:30</option>
+          <option value='04:00'>4:00</option>
+          <option value='04:30'>4:30</option>
+          <option value='05:00'>5:00</option>
+          <option value='05:30'>5:30</option>
+          <option value='06:00'>6:00</option>
+          <option value='06:30'>6:30</option>
+          <option value='07:00'>7:00</option>
+          <option value='07:30'>7:30</option>
+          <option value='08:00'>8:00</option>
+          <option value='08:30'>8:30</option>
+          <option value='09:00'>9:00</option>
+          <option value='09:30'>9:30</option>
+          <option value='10:00'>10:00</option>
+          <option value='10:30'>10:30</option>
+          <option value='11:00'>11:00</option>
+          <option value='11:30'>11:30</option>
+          <option value='12:00'>12:00</option>
+          <option value='12:30'>12:30</option>
+        </select>
+      </div>
+
+      <div data-role="fieldcontain">
+        <select id='deliveryAmPm'>
+          <option value='am'>AM</option>
+          <option value='pm'>PM</option>
+        </select>
+      </div>
+
       <a href='#' id='changeDeliveryTime_btn' data-role='button'>Submit</a>
     </div>
   </div>
@@ -183,7 +285,7 @@
 
         <div class='trayPriceContainer'>
           <div class='redInputLabel' for='tip'>Tip</div>
-          <input type='number' id='tip' class='numberInput'></input>
+          <input type='number' id='tip' class='numberInput'>
         </div>
 
         <div class='trayPriceContainer'>
@@ -191,7 +293,7 @@
           <div class='trayPriceNumber' id='trayTotal'></div>
         </div>
       </div>
-      <a data-role='button' onclick='prepareOrder();'>Order</a>
+      <a data-role='button' href="#checkout">Order</a>
     </div>
 
     <script>
@@ -202,13 +304,14 @@
   <div data-role='page' id='checkout'>
     <div data-role='header'>
       <h1>Checkout</h1>
+      <h2>Total</h2>
     </div>
     <div data-role='content'>
       <ul data-role='listview' class='formGroup' data-inset='true'>
         <div class ='formInput'>
           <div class='formLabel'>Card Type:</div>
           <div class='selectBox'>
-            <select data-role='none' id='cardType_select'>
+            <select id='cardType_select'>
               <option value='ax'>American Express</option>
               <option value='di'>Discover</option>
               <option value='mc'>Mastercard</option>
@@ -216,102 +319,89 @@
             </select>
           </div>
         </div>
-        <div  class='formInput'>
+        <div  data-role="fieldcontain">
           <div class='formLabel'>Card Number:</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="city" id ="creditCardNumber"></input></div>
+          <div class='inputContainer'><input type="text" data-role='none' name="city" id ="creditCardNumber" /></div>
         </div>
-        <div  class='formInput'>
-          <div class="formLabel">Expiration Date:</div>
-          <div class='selectBox'>
-            <select data-role='none' id='creditCardExpirationMonth' value='month'>
-              <option value='month'>Month</option>
-              <option value='01'>01</option>
-              <option value='02'>02</option>
-              <option value='03'>03</option>
-              <option value='04'>04</option>
-              <option value='05'>05</option>
-              <option value='06'>06</option>
-              <option value='07'>07</option>
-              <option value='08'>08</option>
-              <option value='09'>09</option>
-              <option value='10'>10</option>
-              <option value='11'>11</option>
-              <option value='12'>12</option>
-            </select>
-            <select data-role='none' id='creditCardExpirationYear' value='year'>
-              <option value='year' disabled='disabled'>Year</option>
-              <option value='2011'>2011</option>
-              <option value='2012'>2012</option>
-              <option value='2013'>2013</option>
-              <option value='2014'>2014</option>
-            </select>
-          </div>
+
+        <label>Expiration Date:</label>
+
+        <select id='creditCardExpirationMonth' value='month'>
+          <option value='month'>Month</option>
+          <option value='01'>01</option>
+          <option value='02'>02</option>
+          <option value='03'>03</option>
+          <option value='04'>04</option>
+          <option value='05'>05</option>
+          <option value='06'>06</option>
+          <option value='07'>07</option>
+          <option value='08'>08</option>
+          <option value='09'>09</option>
+          <option value='10'>10</option>
+          <option value='11'>11</option>
+          <option value='12'>12</option>
+        </select>
+
+        <select id='creditCardExpirationYear' value='year'>
+          <option value='year' disabled='disabled'>Year</option>
+          <option value='2011'>2011</option>
+          <option value='2012'>2012</option>
+          <option value='2013'>2013</option>
+          <option value='2014'>2014</option>
+        </select>
+
+        <div data-role="fieldcontain">
+          <label for="creditCardCvc">Security Code</label>
+          <input type="text" name="zip" id="creditCardCvc">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>Security Code</div>
-           <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardCvc"></input></div>
+
+        <div data-role="fieldcontain">
+          <label for="creditCardName">Name on Credit Card</label>
+          <input type="text" name="zip" id="creditCardName">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>Name on Credit Card</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardName"></input></div>
+
+        <div data-role="fieldcontain">
+          <label for="creditCardBilling">Billing Address</label>
+          <input type="text" name="zip" id="creditCardBilling">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>Billing Address</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardBilling"></input></div>
+
+        <div data-role="fieldcontain">
+          <label for="creditCardCity">City</label>
+          <input type="text" name="zip" id="creditCardCity">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>City</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardCity"></input></div>
+
+        <div data-role="fieldcontain">
+          <label for="creditCardState">State</label>
+          <input type="text" name="zip" id="creditCardState">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>State</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardState"></input></div>
+
+        <div data-role="fieldcontain">
+          <label for="creditCardZip">Zip</label>
+          <input type="text" name="zip" id="creditCardZip">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>Zip</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="creditCardZip"></input></div>
+
+        <div data-role="fieldcontain">
+          <label for="orderEmail">Email Address</label>
+          <input type="text" name="zip" id="orderEmail">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>Email Address</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderEmail"></input></div>
+
+        <div data-role="fieldcontain">
+          <label for="orderPhone">Phone Number</label>
+          <input type="text" name="zip" id="orderPhone">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>Phone Number</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderPhone"></input></div>
+
+        <div data-role="fieldcontain">
+          <label for="orderFirstName">First Name</label>
+          <input type="text" name="zip" id="orderFirstName">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>First Name</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderFirstName"></input></div>
+
+        <div data-role="fieldcontain">
+          <label for="orderLastName">Last Name</label>
+          <input type="text" name="zip" id="orderLastName">
         </div>
-        <div class='formInput'>
-          <div class='formLabel'>Last Name</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="orderLastName"></input></div>
-        </div>
+
         <div data-role="button" id="checkout_btn" data-icon="check">Go</div>
       </ul>
-    </div>
-  </div>
-
-  <div data-role="page" id="login">
-    <div data-role="header"><h1>Please Login</h1></div>
-    <div data-role="content">
-      <div >
-        <label for="email" class="ui-input-text">Email: </label>
-        <input type="text" name="email" id="loginEmail"></input>
-      </div>
-      <div >
-        <label for="password" class="ui-input-text">Password: </label>
-        <input type='password' name='password' id="loginPassword"></input>
-      </div>
-      <div data-role="button" id="login_btn" data-icon="check">Login</div>
-      <a data-role="button" id="createAccount_btn" data-rel="dialog" href="#createAccount" data-transition="slidedown" data-icon="plus">Create Account</a>
-    </div>
-  </div>
-  <div data-role="dialog" data-icon="alert" id="error">
-    <div data-role="header"><h1>Error</h1></div>
-    <div data-role="content">
-      <p id="errorMsg"></p>
-      <a href="#" data-role="button" id="errorClose_btn" data-icon="check" data-rel="back">Ok</a>
     </div>
   </div>
 
@@ -319,21 +409,21 @@
     <div data-role="header"><h1>New Account</h1></div>
     <div data-role="content">
       <form action="#" method="get">
-        <div >
+        <div data-role="fieldcontain">
           <label for="email" class="ui-input-text">Email: </label>
-          <input type="text" name="email" id="createEmail"></input>
+          <input type="text" name="email" id="createEmail">
         </div>
-        <div >
+        <div data-role="fieldcontain">
           <label for="password"  class="ui-input-text">Password: </label>
-          <input type="password" name="password" id="createPassword"></input>
+          <input type="password" name="password" id="createPassword">
         </div>
-        <div >
+        <div data-role="fieldcontain">
           <label for="first"  class="ui-input-text">First Name: </label>
-          <input type="text" name="first" id="createFirstName"></input>
+          <input type="text" name="first" id="createFirstName">
         </div>
-        <div data-role=''>
+        <div data-role="fieldcontain">
           <label for="last"  class="ui-input-text">Last Name: </label>
-          <input type="text" name="last" id="createLastName"></input>
+          <input type="text" name="last" id="createLastName">
         </div>
         <div data-role="button" id="postAccount_btn" data-icon="check">Create</div>
       </form>
@@ -342,25 +432,24 @@
 
   <div data-role="page" id="createAddress">
     <div data-role="content">
-      <img class='headerImg' src='images/logo-small.png' />
       <p id="createAddressHeader"></p>
       <p id="createAddressSub"></p>
       <ul data-role='listview' class='formGroup' data-inset='true'>
-        <div class='formInput'>
+        <div data-role="fieldcontain">
           <div class='formLabel'>Address:</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="addr" id="createAddressAddress"></input></div>
+          <div class='inputContainer'><input type="text" data-role='none' name="addr" id="createAddressAddress"></div>
         </div>
-        <div  class='formInput'>
+        <div  data-role="fieldcontain">
           <div class='formLabel'>City:</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="city" id="createAddressCity"></input></div>
+          <div class='inputContainer'><input type="text" data-role='none' name="city" id="createAddressCity"></div>
         </div>
-        <div  class='formInput'>
+        <div  data-role="fieldcontain">
           <div class="formLabel">State:</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="state" id="createAddressState"></input></div>
+          <div class='inputContainer'><input type="text" data-role='none' name="state" id="createAddressState"></div>
         </div>
-        <div  class='formInput'>
+        <div  data-role="fieldcontain">
           <div class='formLabel'>Zip Code:</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="createAddressZip"></input></div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="createAddressZip"></div>
         </div>
         <div data-role="button" id="createAddress_btn" data-icon="check">Create</div>
         </ul>
@@ -369,10 +458,11 @@
 
     <div data-role="page" id="history">
       <div data-id='header' data-role='header'>
-        <h1>Settings</h1>
+        <h1>Order History</h1>
       </div>
       <div data-role='content'>
         <ul data-role='listview'>
+
         </ul>
       </div>
 
@@ -381,6 +471,7 @@
       </script>
     </div>
 
+    <!-- Edit Your Name, Addresses, etc. -->
     <div data-role="page" id="settings">
       <div data-id='header' data-role='header'>
         <h1>Settings</h1>
@@ -402,40 +493,22 @@
       </ul>
     </div>
   </div>
+
   <div id="restDetails" data-role="page">
-    <div data-id='header' data-role="header">
-      <h1 class="restName"></h1>
-      <a href="#restaurant"style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Restaurants</a>
-    </div>
-    <div style="padding-top: 0" data-role="content">
-      <div id='restaurantInfo'>
-        <span style="width:75%; white-space:normal" class="restName" id='restHeader'></span><br />
-        <span id='cuisineList'></span>
-        <span id='rAddress'></span><br />
-        <span>
-          <span class="left">Deliver in <span id='estimatedDelivery'></span></span>
-          <span class='right'>Minimum <span id='minimumDelivery'></span></span>
-        </span>
-      </div>
-      <div style="clear: both;"></div>
-      <div id='menuHeader'>Menu Sections</div>
-      <ul data-role="listview" id="menu">
-      </ul>
-    </div>
-    <script type="text/javascript" charset="utf-8">
+    <script>
       $('#restDetails').footer();
     </script>
   </div>
 
-
+  <!--  -->
   <div id='menuItems' data-role='page'>
     <div data-role='header'>
       <h1>Items</h1>
-      <a href="#restDetails" style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Menu</a>
+      <a href="#restDetails" data-direction='reverse' data-icon="arrow-l">Menu</a>
     </div>
     <div data-role='content'>
       <div class='typeInfo typeItem'>
-        <div class='typeName'></div> <br />
+        <div class='typeName'></div>
         <div class="typeDescrip"></div>
       </div>
       <ul id='menuItemList' data-role='listview' class='foodItems'>
@@ -444,14 +517,12 @@
     <script>
       $('#menuItems').footer();
     </script>
-    </div>
-
   </div>
 
   <div data-role="page" id="extrasOverview">
     <div data-role="header">
       <h1>Item</h1>
-      <a href="#menuItems" style='-webkit-box-shadow: none !important' data-direction='reverse' data-icon="arrow-l">Items</a>
+      <a href="#menuItems" data-direction='reverse' data-icon="arrow-l">Items</a>
     </div>
     <div data-role="content">
       <p id='itemInfo'>
@@ -463,12 +534,12 @@
       <div id="quantityPicker">
         <div class='redInputLabel' id='quantityLabel'>Quantity</div>
         <div id='quantityButtons'>
-          <img src='images/button-plus-off.png' class='quantity_btn' id='quantityUp_btn' onclick="increaseQuantity()" />
-          <img src='images/button-minus-off.png' class='quantity_btn' id='quantityDown_btn' onclick='decreaseQuantity()' />
+          <img src='images/button-plus-off.png' class='quantity_btn' id='quantityUp_btn' />
+          <img src='images/button-minus-off.png' class='quantity_btn' id='quantityDown_btn' />
         </div>
-        <input type='number' class='numberInput' id='extrasQuantity' value="1"></input><!-- TODO: make this numbers only -->
+        <input type='number' class='numberInput' id='extrasQuantity' value="1">
       </div>
-      <img src='images/button-addtray-off.png' onclick='addCurrItemToTray()' class='centerButton'/>
+      <img src='images/button-addtray-off.png' id='addToTray' class='centerButton'/>
     </div>
 
     <script>

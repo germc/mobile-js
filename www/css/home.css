@@ -1,0 +1,42 @@
+#home {
+  background: url(../images/waves.png);
+  text-align: center; }
+  #home #logo {
+    padding: 24px 0; }
+  #home #container {
+    background: white;
+    margin: 20px;
+    border: 8px solid rgba(0, 0, 0, 0.2);
+    padding-bottom: 16px;
+    border-radius: 5px;
+    margin-top: 50px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding;
+    background-clip: padding-box; }
+
+#facebook-button {
+  font-family: "Lucida Grande";
+  border: 1px solid #3d4d77;
+  color: white;
+  padding: 12px 16px;
+  width: 400px;
+  display: block;
+  margin: 0 auto;
+  text-shadow: 0 -1px 0 black;
+  text-decoration: none;
+  -moz-border-radius: 6px;
+  -khtml-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  background: -webkit-gradient(linear, left top, left bottom, from(#6887c4), to(#3c62a1));
+  background: -moz-linear-gradient(top, #6887c4, #3c62a1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6887c4', endColorstr='#3c62a1');
+  -moz-box-shadow: inset 0px 2px 0 #859cca, 0 2px 0 #284483;
+  -webkit-box-shadow: inset 0px 2px 0 #859cca, 0 2px 0 #284483;
+  box-shadow: inset 0px 2px 0 #859cca, 0 2px 0 #284483; }
+  #facebook-button:hover {
+    background: -webkit-gradient(linear, left top, left bottom, from(#6887c4), to(#2e4b7c));
+    background: -moz-linear-gradient(top, #6887c4, #2e4b7c); }
