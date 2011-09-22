@@ -89,21 +89,6 @@ $(window).ready(function(){
     });
   });
 
-$("#menuExtras").bind("pagebeforeshow", function(){
-  $("#optionsList").listview("refresh");
-});
-
-//Add/Decrease Quantities
-$('#quantityUp_btn').click(function(){ increaseQuantity(); });
-$('#quantityDown_btn').click(function(){ decreaseQuantity(); });
-$('#addToTray').click(function(){ addCurrItemToTray(); });
-
-//This should be happening elsewhere
-$("#login_btn").bind("tap", loginUser);
-$("#checkout_btn").bind("tap", checkout);
-
-$("#postAccount_btn").bind("tap", createAccount);
-
 function handleNoGeolocation() {
   alert("Geolocation service failed.");
   $("#createAddressHeader").html("Where Would You Like Your Food Delivered To?");
@@ -120,10 +105,6 @@ function openDialog(parent, name, transition){
 function error(msg, title, btnName){
   $.mobile.pageLoading(true);
   navigator.notification.alert(msg, null, title, btnName);
-}
-function deactivateButtons(){
-  $(".ui-btn-active").removeClass("ui-btn-active");
-  $(".ui-btn-active").removeClass("ui-btn-active");
 }
 
 //General purpose form validation?

@@ -36,7 +36,6 @@ function populateMenuItems() {
   $(".typeName").html(currRest.menu[currMenu].name);
   $(".typeDescrip").html(currRest.menu[currMenu].descrip);
   $.mobile.changePage("#menuItems");
-  $(".typeItem").bind("tap", setCurrItem);
   $("#menuItemList").listview("refresh");
 }
 
@@ -63,6 +62,4 @@ $("#restaurantTypes_selector").change(function(){
     var id = this.id.replace("option", "");
     $(this).children("img").toggleClass("hidden");
   });
-  $("#createAddress_btn").bind("tap", createAddress);
-  $("#changeDeliveryTime_btn").bind("tap", changeDeliveryTime);
 });

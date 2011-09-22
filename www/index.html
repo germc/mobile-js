@@ -112,6 +112,41 @@
       </li>
     </script>
 
+    <script id="trayTemplate" type="text/x-jquery-tmpl">
+
+      <div data-role='content'>
+        <ul data-role='listview' id='trayList'></ul>
+
+        <div id='trayPrices'>
+          <div class='trayPriceContainer'>
+            <div class='redInputLabel'>Subtotal</div>
+            <div class='trayPriceNumber' id='traySubtotal'>${price.toFixed(2)}</div>
+          </div>
+
+          <div class='trayPriceContainer'>
+            <div class='redInputLabel'>Delivery Fee</div>
+            <div class='trayPriceNumber' id='trayFee'>${fee}</div>
+          </div>
+
+          <div class='trayPriceContainer'>
+            <div class='redInputLabel'>Tax</div>
+            <div class='trayPriceNumber' id='trayTax'>${tax}</div>
+          </div>
+
+          <div class='trayPriceContainer'>
+            <div class='redInputLabel' for='tip'>Tip</div>
+            <input type='number' id='tip' class='numberInput' value="${tip}">
+          </div>
+
+          <div class='trayPriceContainer'>
+            <div class='redInputLabel'>Total</div>
+            <div class='trayPriceNumber' id='trayTotal'>${trayTotal}</div>
+          </div>
+        </div>
+        <a data-role='button' href="#checkout">Order</a>
+      </div>
+    </script>
+
     <script id='trayItemTemplate' type="text/x-jquery-tmpl">
       <li id='trayItem${id}' class='trayItem'>
         <a onclick='editTrayItem(${index})'>
@@ -152,19 +187,16 @@
       </div>
     </script>
   </head>
+
 <body>
+  <!-- Facebook Initialize Code -->
   <div id="fb-root"></div>
   <script src="http://connect.facebook.net/en_US/all.js"></script>
   <script>
     window.fbAsyncInit = function() {
-     FB.init({
-      appId  : '237640389617454',
-      status : true, // check login status
-      cookie : true, // enable cookies to allow the server to access the session
-      xfbml  : true, // parse XFBML
-      oauth  : true // enable OAuth 2.0
-    });
+     FB.init({ appId  : '237640389617454', status : true, cookie : true, xfbml  : true, oauth  : true });
     };
+
     (function(d){
        var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
        js = d.createElement('script'); js.id = id; js.async = true;
@@ -173,24 +205,7 @@
      }(document));
   </script>
 
-<!-- These are the pages:
-  #home
-  #error
-  #restList
-  #timePicker
-  #tray
-  #checkout
-  #createAccount
-  #createAddress
-  #history
-  #settings
-  #selectAddress
-  #restDetails
-  #menuItems
-  #extrasOverview
-  #menuExtras
--->
-
+  <!-- Pages -->
   <div data-role="page" id="home">
     <div id="container">
       <div data-role="content">
@@ -275,37 +290,6 @@
   <div data-role='page' id='tray'>
     <div data-role='header'>
       <h1>Tray</h1>
-    </div>
-    <div data-role='content'>
-      <ul data-role='listview' id='trayList'>
-      </ul>
-      <div id='trayPrices'>
-        <div class='trayPriceContainer'>
-          <div class='redInputLabel'>Subtotal</div>
-          <div class='trayPriceNumber' id='traySubtotal'></div>
-        </div>
-
-        <div class='trayPriceContainer'>
-          <div class='redInputLabel'>Delivery Fee</div>
-          <div class='trayPriceNumber' id='trayFee'></div>
-        </div>
-
-        <div class='trayPriceContainer'>
-          <div class='redInputLabel'>Tax</div>
-          <div class='trayPriceNumber' id='trayTax'></div>
-        </div>
-
-        <div class='trayPriceContainer'>
-          <div class='redInputLabel' for='tip'>Tip</div>
-          <input type='number' id='tip' class='numberInput'>
-        </div>
-
-        <div class='trayPriceContainer'>
-          <div class='redInputLabel'>Total</div>
-          <div class='trayPriceNumber' id='trayTotal'></div>
-        </div>
-      </div>
-      <a data-role='button' href="#checkout">Order</a>
     </div>
 
     <script>

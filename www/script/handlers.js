@@ -1,12 +1,40 @@
+$("#menuExtras").bind("pagebeforeshow", function(){
+  $("#optionsList").listview("refresh");
+});
+
+//Add/Decrease Quantities
+$('#quantityUp_btn').click(function(){ increaseQuantity(); });
+$('#quantityDown_btn').click(function(){ decreaseQuantity(); });
+$('#addToTray').click(function(){ addCurrItemToTray(); });
+
+//general link bindings
+$("#login_btn").bind("tap", loginUser);
+$("#checkout_btn").bind("tap", checkout);
+$("#createAddress_btn").bind("tap", createAddress);
+$("#changeDeliveryTime_btn").bind("tap", changeDeliveryTime);
+$(".typeItem").bind("tap", setCurrItem);
+$("#postAccount_btn").bind("tap", createAccount);
+
 //Link templates and content
 $('#settings').live('click', function(){
   $('#settingsTemplate').tmpl().appendTo('#settings');
 });
 
-/* For now all click handlers will go in here
-* This is temporary until a better method of encapsulating this code happens...
-* TODO:
-*/
+function increaseQuantity(){
+  $("#extrasQuantity").val(parseInt($("#extrasQuantity").val()) + 1);
+}
+
+function decreaseQuantity(){
+  if ($("#extrasQuantity").val() > 1)
+    $("#extrasQuantity").val(parseInt($("#extrasQuantity").val()) - 1);
+}
+
+//click handlers
+function deactivateButtons(){
+  $(".ui-btn-active").removeClass("ui-btn-active");
+  $(".ui-btn-active").removeClass("ui-btn-active");
+}
+
 function createAccount(){
     currUser.email = $("#createEmail").val();
     currUser.pass  = $("#createPassword").val();
@@ -55,8 +83,8 @@ function createAddress(){
     }
 }
 
-//prioritizing Facebook login
 function loginUser(){
+    //TODO: implement facebook login here as well
     currUser.email = $("#loginEmail").val();
     currUser.pass  = $("#loginPassword").val();
     $.mobile.pageLoading();
@@ -82,11 +110,4 @@ function loginUser(){
     }catch(e){
       error(e);
     }
-}
-function increaseQuantity(){
-  $("#extrasQuantity").val(parseInt($("#extrasQuantity").val()) + 1);
-}
-function decreaseQuantity(){
-  if ($("#extrasQuantity").val() > 1)
-    $("#extrasQuantity").val(parseInt($("#extrasQuantity").val()) - 1);
 }
