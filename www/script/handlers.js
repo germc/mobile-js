@@ -8,6 +8,7 @@ $('#quantityDown_btn').click(function(){ decreaseQuantity(); });
 $('#addToTray').click(function(){ addCurrItemToTray(); });
 
 //general link bindings
+$("#home_btn").bind("tap", getRestaurantList);
 $("#login_btn").bind("tap", loginUser);
 $("#checkout_btn").bind("tap", checkout);
 $("#createAddress_btn").bind("tap", createAddress);

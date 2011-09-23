@@ -6,19 +6,20 @@ function getRestaurantList(){
   Ordrin.r.deliveryList(time, place, function(data){
     data = JSON.parse(data);
     $('#restListTemplate').tmpl(data).appendTo('#restaurantList');
+    $('#restaurantList').listview('refresh');
+    $.mobile.changePage('#restList');
   });
-
-  $.mobile.changePage('#restList');
 }
 
 function getRestaurantDetails(rid){
   Ordrin.r.details(rid, function(data){
-    var data = JSON.parse(data);
-    $('#restDetails').html(null);
-    $('#restDetailsTemplate').tmpl(data).appendTo('#restDetails');
-  });
+    restaurant = JSON.parse(data);
 
-  $.mobile.changePage("#restDetails");
+    $('#restDetails').empty();
+    $('#restDetailsTemplate').tmpl(restaurant).appendTo('#restDetails');
+    $('#menuItemTemplate').tmpl(restaurant.menu).appendTo('#restaurantMenu');
+    $.mobile.changePage("#restDetails");
+  });
 }
 
 function changeDeliveryTime(){
@@ -28,8 +29,8 @@ function changeDeliveryTime(){
  getRestaurantList(false);
 }
 
-function populateMenuItems() {
-  var index = parseInt(this.id.replace("menu", ""));
+function populateMenuItems(rid) {
+  var index = rid;
   currMenu = index;
   $("#menuItemList").empty();
   $("#menuItemTemplate").tmpl(currRest.menu[currMenu].children).appendTo("#menuItemList");
@@ -58,8 +59,8 @@ $("#restaurantTypes_selector").change(function(){
       }
     }
   });
+
   $(".optionBox").live("tap", function(){
     var id = this.id.replace("option", "");
     $(this).children("img").toggleClass("hidden");
   });
-});

@@ -35,6 +35,7 @@ $(window).ready(function(){
         db.storeAccount("guest", "", "true");
         currUser.email = "guest";
 
+
         navigator.geolocation.getCurrentPosition(function(position){
           // set up Google Maps Geocoder
           if (position.latitude && position.longitude) {
@@ -88,6 +89,7 @@ $(window).ready(function(){
       }
     });
   });
+});
 
 function handleNoGeolocation() {
   alert("Geolocation service failed.");

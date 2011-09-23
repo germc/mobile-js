@@ -22,36 +22,31 @@
     <script src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
 
     <script type="text/javascript" charset="utf-8" src="script/footer.js"></script>
-    <script type="text/javascript" charset="utf-8" src="script/handlers.js"></script>
-    <script type="text/javascript" charset="utf-8" src='script/index.js'></script>
     <script type="text/javascript" charset="utf-8" src="script/database.js"></script>
     <script type="text/javascript" charset="utf-8" src="script/restaurant.js"></script>
     <script type="text/javascript" charset="utf-8" src="script/tray.js"></script>
     <script type="text/javascript" charset="utf-8" src="script/user.js"></script>
-
-    <!-- Mobile theme -->
-    <link rel='stylesheet' href='css/styles.css' />
-    <link rel="stylesheet" href="css/main.css" />
+    <script type="text/javascript" charset="utf-8" src='script/index.js'></script>
 
     <!-- Additional theming -->
-    <link rel="stylesheet" href="css/defaults.css" />
     <link rel="stylesheet" href="css/home.css" />
     <!--<link rel="stylesheet" href="css/restaurants.css" />
     <link rel="stylesheet" href="css/settings.css" />-->
 
     <!-- templates for rendering dynamic ajax content -->
     <script id="restListTemplate" type="text/x-jquery-tmpl">
-      <li onclick="getRestaurantDetails(${id});" class='restaurantListItem ui-btn-icon-right' id="restaurant_${id}">
-        <span class="ui-link-inherit">
-          <h3>${na}</h3>
-          <p class='cuisineList'>${cuisines}</p>
-          <p class="address">${ad}</p>
-          {{if is_del}}
-            <p><strong>Delivering Now</strong></p>
-          {{else}}
-            <p>Not Delivering</p>
-          {{/if}}
-        </span>
+      <li onclick="getRestaurantDetails(${id});" id="restaurant_${id}">
+          <a href="#">
+            <h3>${na}</h3>
+            <p>${cuisines}</p>
+            <p>${ad}</p>
+
+            {{if is_del}}
+              <p><strong>Delivering Now</strong></p>
+            {{else}}
+              <p>Not Delivering</p>
+            {{/if}}
+          </a>
         <span class="ui-icon-arrow-r"></span>
       </li>
     </script>
@@ -60,6 +55,7 @@
       <div data-id='header' data-role="header">
         <h1 class="restName">${name}</h1>
       </div>
+
       <div data-role="content">
         <div id='restInfo'>
           <span class="restName" id='restHeader'></span>
@@ -71,8 +67,10 @@
           </div>
         </div>
         <div id='menuHeader'>Menu Sections</div>
-        <ul data-role="listview" id="restaurantMenu">
-        </ul>
+
+        <div data-role="collapsible-set" id="restaurantMenu"></div>
+
+        <a href="#checkout">Order</a>
       </div>
     </script>
 
@@ -83,14 +81,19 @@
     </script>
 
     <script id="menuItemTemplate" type="text/x-jquery-tmpl">
-      <li class='typeItem ui-btn ui-btn-icon-right' id="item_${id}">
-        <div>
-          <h3>${name}</h3>
-          <p>${descrip}</p>
-        </div>
-        <p class="ui-li-aside">$${price}</p>
-        <span class="ui-icon ui-icon-arrow-r"></span>
-      </li>
+      <div data-role="collapsible" id="item_${id}">
+        <h3>${name}</h3>
+        <p>${descrip}</p>
+
+        <ul data-count-theme="b" data-role="listview" data-inset="true">
+          {{each children}}
+            <li class="menuItem" data-icon="plus">
+              <a href="#">${name}</a>
+              <span class="ui-li-count">$${price}</span>
+            </li>
+          {{/each}}
+        </ul>
+      </div>
     </script>
 
     <script id="menuExtrasTemplate" type="text/x-jquery-tmpl">
@@ -175,7 +178,7 @@
       <div data-role="footer" class="mainFooter" data-position="fixed" data-id="mainFooter">
         <div data-role="navbar" class="mainFooter">
           <ul>
-            <li><a href="#restaurant" id="home_btn" data-icon="home">Home</a></li>
+            <li><a href="#restList" id="home_btn" data-icon="home">Restaurants</a></li>
             <li>
                <div class='circle trayCount'></div>
                <a href="#tray" id="tray_btn" data-icon="custom">Your Tray</a>
@@ -200,7 +203,7 @@
     (function(d){
        var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
        js = d.createElement('script'); js.id = id; js.async = true;
-       js.src = "//connect.facebook.net/en_US/all.js";
+       js.src = "http://connect.facebook.net/en_US/all.js";
        d.getElementsByTagName('head')[0].appendChild(js);
      }(document));
   </script>
@@ -227,7 +230,7 @@
 
   <div data-role="page" id="restList">
     <div data-id='header' data-role="header">
-      <h1>Restaurants Delivering To</h1>
+      <h1>Restaurants Delivering To You</h1>
     </div>
     <div data-role="content">
       <ul data-role="listview" id="restaurantList">
@@ -235,7 +238,7 @@
     </div>
 
     <script>
-      $('#restaurant').footer();
+      $('#restList').footer();
     </script>
   </div>
 
@@ -347,53 +350,53 @@
         </select>
 
         <div data-role="fieldcontain">
-          <label for="creditCardCvc">Security Code</label>
-          <input type="text" name="zip" id="creditCardCvc">
+          <label>Security Code</label>
+          <input type="text" name="creditCardCvc" id="creditCardCvc">
         </div>
 
         <div data-role="fieldcontain">
-          <label for="creditCardName">Name on Credit Card</label>
-          <input type="text" name="zip" id="creditCardName">
+          <label>Name on Credit Card</label>
+          <input type="text" name="creditCardName" id="creditCardName" />
         </div>
 
         <div data-role="fieldcontain">
-          <label for="creditCardBilling">Billing Address</label>
-          <input type="text" name="zip" id="creditCardBilling">
+          <label>Billing Address</label>
+          <input type="text" name="creditCardBilling" id="creditCardBilling">
         </div>
 
         <div data-role="fieldcontain">
-          <label for="creditCardCity">City</label>
-          <input type="text" name="zip" id="creditCardCity">
+          <label>City</label>
+          <input type="text" name="creditCardCity" id="creditCardCity">
         </div>
 
-        <div data-role="fieldcontain">
+        <div>
           <label for="creditCardState">State</label>
-          <input type="text" name="zip" id="creditCardState">
+          <input type="text" name="creditCardState" id="creditCardState">
         </div>
 
         <div data-role="fieldcontain">
-          <label for="creditCardZip">Zip</label>
-          <input type="text" name="zip" id="creditCardZip">
+          <label>Zip</label>
+          <input type="text" name="creditCardZip" id="creditCardZip">
         </div>
 
         <div data-role="fieldcontain">
-          <label for="orderEmail">Email Address</label>
-          <input type="text" name="zip" id="orderEmail">
+          <label>Email Address</label>
+          <input type="text" name="orderEmail" id="orderEmail">
         </div>
 
         <div data-role="fieldcontain">
-          <label for="orderPhone">Phone Number</label>
-          <input type="text" name="zip" id="orderPhone">
+          <label>Phone Number</label>
+          <input type="text" name="orderPhone" id="orderPhone">
         </div>
 
         <div data-role="fieldcontain">
-          <label for="orderFirstName">First Name</label>
-          <input type="text" name="zip" id="orderFirstName">
+          <label>First Name</label>
+          <input type="text" name="orderFirstName" id="orderFirstName">
         </div>
 
         <div data-role="fieldcontain">
-          <label for="orderLastName">Last Name</label>
-          <input type="text" name="zip" id="orderLastName">
+          <label>Last Name</label>
+          <input type="text" name="orderLastName" id="orderLastName">
         </div>
 
         <div data-role="button" id="checkout_btn" data-icon="check">Go</div>
@@ -491,8 +494,6 @@
   </div>
 
   <div id="restDetails" data-role="page">
-
-    <a href="#checkout">Order</a>
     <script>
       $('#restDetails').footer();
     </script>
@@ -539,5 +540,8 @@
       $('#menuExtras').footer();
     </script>
   </div>
+
+
+  <script type="text/javascript" charset="utf-8" src="script/handlers.js"></script>
 </body>
 </html>
