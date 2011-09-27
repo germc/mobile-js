@@ -13,11 +13,11 @@ function getRestaurantList(){
 
 function getRestaurantDetails(rid){
   Ordrin.r.details(rid, function(data){
-    restaurant = JSON.parse(data);
+    currRest = JSON.parse(data);
 
     $('#restDetails').empty();
-    $('#restDetailsTemplate').tmpl(restaurant).appendTo('#restDetails');
-    $('#menuItemTemplate').tmpl(restaurant.menu).appendTo('#restaurantMenu');
+    $('#restDetailsTemplate').tmpl(currRest).prependTo('#restDetails');
+    $('#menuItemTemplate').tmpl(currRest.menu).appendTo('#restaurantMenu');
     $.mobile.changePage("#restDetails");
   });
 }

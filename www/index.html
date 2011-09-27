@@ -51,16 +51,17 @@
       </li>
     </script>
 
+    <script id="removeItemButton" type="text/x-jquery-tmpl">
+      <a id="removeItem_${id}" class="removeItemButton" data-role="button" data-inline="true" data-icon="minus">Delete</a>
+    </script>
+
     <script id="restDetailsTemplate" type="text/x-jquery-tmpl">
-      <div data-id='header' data-role="header">
-        <h1 class="restName">${name}</h1>
-      </div>
 
       <div data-role="content">
         <div id='restInfo'>
-          <span class="restName" id='restHeader'></span>
-          <span id='cuisineList'>${cuisines}</span>
-          <span id='rAddress'>${addr} ${city}, ${state} ${postal_code}</span>
+          <h1 class="restName">${name}</h1>
+          <h3 id='rAddress'>${addr} ${city}, ${state} ${postal_code}</h3>
+          <h3 id='cuisineList'>${cuisines}</h3>
           <div>
             <span class="left">Deliver in ${del}</span>
             <span class='right'>Minimum ${mino}</span>
@@ -69,8 +70,12 @@
         <div id='menuHeader'>Menu Sections</div>
 
         <div data-role="collapsible-set" id="restaurantMenu"></div>
+      </div>
 
-        <a href="#checkout">Order</a>
+      <div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+          <a href="#checkout">Order</a>
+        </div>
       </div>
     </script>
 
@@ -81,15 +86,16 @@
     </script>
 
     <script id="menuItemTemplate" type="text/x-jquery-tmpl">
-      <div data-role="collapsible" id="item_${id}">
+      <div data-role="collapsible" id="category_${id}">
         <h3>${name}</h3>
         <p>${descrip}</p>
 
         <ul data-count-theme="b" data-role="listview" data-inset="true">
           {{each children}}
-            <li class="menuItem" data-icon="plus">
+            <li onclick="setCurrItem(${id})" class="menuItem" data-icon="plus" id="item_${id}">
               <a href="#">${name}</a>
               <span class="ui-li-count">$${price}</span>
+              <span id="item_${id}_quantity" class="ul-li-count">${quantity}</span>
             </li>
           {{/each}}
         </ul>
@@ -233,13 +239,19 @@
       <h1>Restaurants Delivering To You</h1>
     </div>
     <div data-role="content">
-      <ul data-role="listview" id="restaurantList">
-      </ul>
+      <ul data-role="listview" id="restaurantList"></ul>
     </div>
 
-    <script>
-      $('#restList').footer();
-    </script>
+    <script>$('#restList').footer();</script>
+  </div>
+
+  <div id="restDetails" data-role="page">
+
+    <div data-role="footer">
+      <div data-role="nav">
+        <script>$('#restDetails').footer();</script>
+      </div>
+    </div>
   </div>
 
   <div data-role='page' id='timePicker'>
@@ -465,9 +477,7 @@
         </ul>
       </div>
 
-      <script>
-        $('#history').footer();
-      </script>
+      <script>$('#history').footer();</script>
     </div>
 
     <!-- Edit Your Name, Addresses, etc. -->
@@ -480,9 +490,7 @@
         </ul>
       </div>
 
-      <script>
-        $('#settings').footer();
-      </script>
+      <script>$('#settings').footer();</script>
   </div>
 
   <div data-role="page" id="selectAddress">
@@ -491,12 +499,6 @@
       <ul data-role="listview" id="addressList">
       </ul>
     </div>
-  </div>
-
-  <div id="restDetails" data-role="page">
-    <script>
-      $('#restDetails').footer();
-    </script>
   </div>
 
   <!--  -->
@@ -515,9 +517,7 @@
     </div>
 
     <a href="#checkout">Order</a>
-    <script>
-      $('#menuItems').footer();
-    </script>
+    <script>$('#menuItems').footer();</script>
   </div>
 
   <div data-role="page" id="extrasOverview">
@@ -530,9 +530,7 @@
       <ul id="extrasList" data-role="listview"></ul>
     </div>
 
-    <script>
-      $('#extrasOverview').footer();
-    </script>
+    <script>$('#extrasOverview').footer();</script>
   </div>
 
   <div data-role="page" id="menuExtras">

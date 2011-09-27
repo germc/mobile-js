@@ -1,12 +1,25 @@
-function setCurrItem(){
-  var index = parseInt(this.id.replace("item", ""));
-    for (var i = 0; i < currRest.menu[currMenu].children.length; i++) {
-      if (currRest.menu[currMenu].children[i].id == index) {
-        currItem = currRest.menu[currMenu].children[i];
+//needs to be accessible in a few places
+var currItemDiv;
+
+function setCurrItem(item_id){
+  var index = parseInt(item_id);
+
+  //display removeItem button
+
+  //loop over restaurant.menu
+  //currRest came from getRestaurantDetails
+  for (var i = 0; i < currRest.menu.length; i++) {
+    for (var j = 0; j < currRest.menu[i].children.length; j++) {
+      if (currRest.menu[i].children[j].id == index) {
+        currItem = currRest.menu[i].children[j];
         currItem.menuPrice = currItem.price;
+        if (!currItem.quantity) { currItem.quantity = 1; } //NaN issue
         break;
       }
     }
+  }
+
+  $('#removeItemButton').tmpl(currItem).prependTo(currItemDiv);
 
   populateExtras();
 }
@@ -37,26 +50,37 @@ function createExtrasPage(index){
 }
 
 function addCurrItemToTray(){
+  tray.count    += 1;
   calculateItemPrice(currItem);
-  currItem.quantity = $("#extrasQuantity").val();
+  tray.price     += parseFloat(currItem.price);
+
+  currItemDiv = $('#item_' + currItem.id + '_quantity');
+  currItemDiv.html(currItem.quantity);
+  $('#removeItemButton').tmpl(currItem).prependTo(currItemDiv);
 
   if (!currItem.inTray){
     tray.items.push(currItem);
-    tray.price     += parseFloat(currItem.price * currItem.quantity);
-    tray.count     += parseInt(currItem.quantity);
     currItem.inTray = true;
-    $.mobile.changePage("#restDetails");
   }
   else
   {
-    tray.price     += parseFloat(currItem.price * currItem.quantity - currItem.originalPrice * currItem.originalQuantity);
-    tray.count     += parseInt(currItem.quantity - currItem.originalQuantity);
-    updateTrayPrice($("#tip").val());
+    for (var i = 0; i < tray.items.length; i++) {
+      if (tray.items[i].id == currItem.id) {
+        tray.items[i].quantity += 1;
+      }
+    }
     createExtrasString();
+    currItemDiv.html(currItem.quantity);
     $("#trayItemTemplate").tmpl(tray.items).appendTo("#trayList");
-    $("#trayList").listview("refresh");
-    history.back();
   }
+}
+
+function removeCurrItemFromTray() {
+  tray.count -= 1;
+  calculateItemPrice(currItem);
+  tray.price -= parseFloat(currItem.price);
+
+  currItemDiv.html(currItem.quantity);
 }
 
 function calculateItemPrice(item){
@@ -80,10 +104,14 @@ function loadTray(){
 
 //should be called every time items are added or tips are done
 function updateTrayPrice(tip){
+  if (!place) { var place = '1 Main Street, Weston, 77840'; }
   Ordrin.r.deliveryFee(currRest.restaurant_id, new Money(tray.price), new Money(tip), time, place, function(data){
     data = JSON.parse(data);
+    total = parseFloat(tray.price) + parseFloat(data.fee) + parseFloat($("#tip").val()) + parseFloat(data.tax.toFixed(2));
+
     $('#trayTemplate').tmpl(data).appendTo('#tray');
-    $("#trayTotal").html("$" + (parseFloat(tray.price) + parseFloat(data.fee) + parseFloat($("#tip").val()) + parseFloat(data.tax)).toFixed(2));
+    $("#trayTotal").html("$" + total);
+    $('#tray').listview('refresh');
   });
 }
 

@@ -3,6 +3,7 @@ $("#menuExtras").bind("pagebeforeshow", function(){
 });
 
 //Add/Decrease Quantities
+$('#menuItem').click(function(){ increaseQuantity(); });
 $('#quantityUp_btn').click(function(){ increaseQuantity(); });
 $('#quantityDown_btn').click(function(){ decreaseQuantity(); });
 $('#addToTray').click(function(){ addCurrItemToTray(); });
