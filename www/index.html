@@ -26,6 +26,7 @@
     <script type="text/javascript" charset="utf-8" src="script/restaurant.js"></script>
     <script type="text/javascript" charset="utf-8" src="script/tray.js"></script>
     <script type="text/javascript" charset="utf-8" src="script/user.js"></script>
+    <script type="text/javascript" charset="utf-8" src="script/order.js"></script>
     <script type="text/javascript" charset="utf-8" src='script/index.js'></script>
 
     <!-- Additional theming -->
@@ -56,6 +57,9 @@
     </script>
 
     <script id="restDetailsTemplate" type="text/x-jquery-tmpl">
+      <div data-role='header'>
+        <a href="#timePicker" data-icon="gear" data-rel="dialog">Change Delivery Time</a>
+      </div>
 
       <div data-role="content">
         <div id='restInfo'>
@@ -74,7 +78,7 @@
 
       <div data-role="footer" data-position="fixed">
         <div data-role="navbar">
-          <a href="#checkout">Order</a>
+          <a href="#checkout" style="display: block;">Order</a>
         </div>
       </div>
     </script>
@@ -246,7 +250,6 @@
   </div>
 
   <div id="restDetails" data-role="page">
-
     <div data-role="footer">
       <div data-role="nav">
         <script>$('#restDetails').footer();</script>
@@ -314,104 +317,81 @@
 
   <div data-role='page' id='checkout'>
     <div data-role='header'>
-      <h1>Checkout</h1>
-      <h2>Total</h2>
+      <h1>Checkout Page</h1>
     </div>
     <div data-role='content'>
-      <ul data-role='listview' class='formGroup' data-inset='true'>
-        <div class ='formInput'>
-          <div class='formLabel'>Card Type:</div>
-          <div class='selectBox'>
+
+        <div class="ui-grid-a fieldcontain">
+          <div class="ui-block-a">
             <select id='cardType_select'>
+              <option value='card_type' disabled="disabled">Card Type</option>
               <option value='ax'>American Express</option>
               <option value='di'>Discover</option>
               <option value='mc'>Mastercard</option>
               <option value='vi'>Visa</option>
             </select>
           </div>
+
+          <div class="ui-block-b">
+            <input type="text" name="city" id ="creditCardNumber" placeholder="Card Number" />
+          </div>
         </div>
-        <div  data-role="fieldcontain">
-          <div class='formLabel'>Card Number:</div>
-          <div class='inputContainer'><input type="text" data-role='none' name="city" id ="creditCardNumber" /></div>
-        </div>
 
-        <label>Expiration Date:</label>
+        <fieldset class="ui-grid-a">
+          <div class="ui-block-a">
+            <select id='creditCardExpirationMonth' value='month'>
+              <option value='month' disabled="disabled">Month</option>
+              <option value='01'>01</option>
+              <option value='02'>02</option>
+              <option value='03'>03</option>
+              <option value='04'>04</option>
+              <option value='05'>05</option>
+              <option value='06'>06</option>
+              <option value='07'>07</option>
+              <option value='08'>08</option>
+              <option value='09'>09</option>
+              <option value='10'>10</option>
+              <option value='11'>11</option>
+              <option value='12'>12</option>
+            </select>
+          </div>
 
-        <select id='creditCardExpirationMonth' value='month'>
-          <option value='month'>Month</option>
-          <option value='01'>01</option>
-          <option value='02'>02</option>
-          <option value='03'>03</option>
-          <option value='04'>04</option>
-          <option value='05'>05</option>
-          <option value='06'>06</option>
-          <option value='07'>07</option>
-          <option value='08'>08</option>
-          <option value='09'>09</option>
-          <option value='10'>10</option>
-          <option value='11'>11</option>
-          <option value='12'>12</option>
-        </select>
+          <div class="ui-block-b">
+            <select class="ui-block-b" id='creditCardExpirationYear' value='year'>
+              <option value='year' disabled='disabled'>Year</option>
+              <option value='2011'>2011</option>
+              <option value='2012'>2012</option>
+              <option value='2013'>2013</option>
+              <option value='2014'>2014</option>
+            </select>
+          </div>
+        </fieldset>
 
-        <select id='creditCardExpirationYear' value='year'>
-          <option value='year' disabled='disabled'>Year</option>
-          <option value='2011'>2011</option>
-          <option value='2012'>2012</option>
-          <option value='2013'>2013</option>
-          <option value='2014'>2014</option>
-        </select>
+        <input type="text" name="creditCardCvc" id="creditCardCvc" placeholder="CVC">
 
         <div data-role="fieldcontain">
-          <label>Security Code</label>
-          <input type="text" name="creditCardCvc" id="creditCardCvc">
-        </div>
-
-        <div data-role="fieldcontain">
-          <label>Name on Credit Card</label>
-          <input type="text" name="creditCardName" id="creditCardName" />
-        </div>
-
-        <div data-role="fieldcontain">
-          <label>Billing Address</label>
-          <input type="text" name="creditCardBilling" id="creditCardBilling">
+          <input type="text" name="creditCardName" id="creditCardName" placeholder="Name on Credit Card">
         </div>
 
         <div data-role="fieldcontain">
-          <label>City</label>
-          <input type="text" name="creditCardCity" id="creditCardCity">
+          <input type="text" name="creditCardBilling" id="creditCardBilling" placeholder="Billing Address">
         </div>
 
-        <div>
-          <label for="creditCardState">State</label>
-          <input type="text" name="creditCardState" id="creditCardState">
-        </div>
-
-        <div data-role="fieldcontain">
-          <label>Zip</label>
-          <input type="text" name="creditCardZip" id="creditCardZip">
+        <div class="ui-grid-b" data-role="fieldcontain">
+          <div class="ui-block-a"><input type="text" name="creditCardCity" id="creditCardCity" placeholder="City"></div>
+          <div class="ui-block-b"><input type="text" name="creditCardState" id="creditCardState" placeholder="State"></div>
+          <div class="ui-block-c"><input type="text" name="creditCardZip" id="creditCardZip" placeholder="ZIP"></div>
         </div>
 
         <div data-role="fieldcontain">
-          <label>Email Address</label>
-          <input type="text" name="orderEmail" id="orderEmail">
+          <input type="text" name="orderEmail" id="orderEmail" placeholder="Email">
         </div>
 
         <div data-role="fieldcontain">
-          <label>Phone Number</label>
-          <input type="text" name="orderPhone" id="orderPhone">
+          <input type="text" name="orderPhone" id="orderPhone" placeholder="Phone">
         </div>
 
-        <div data-role="fieldcontain">
-          <label>First Name</label>
-          <input type="text" name="orderFirstName" id="orderFirstName">
-        </div>
-
-        <div data-role="fieldcontain">
-          <label>Last Name</label>
-          <input type="text" name="orderLastName" id="orderLastName">
-        </div>
-
-        <div data-role="button" id="checkout_btn" data-icon="check">Go</div>
+        <div data-role="button" id="checkout_btn" data-icon="check">Complete Order!</div>
       </ul>
     </div>
   </div>
@@ -463,7 +443,7 @@
           <div class='inputContainer'><input type="text" data-role='none' name="zip" id="createAddressZip"></div>
         </div>
         <div data-role="button" id="createAddress_btn" data-icon="check">Create</div>
-        </ul>
+
       </div>
     </div>
 
@@ -501,19 +481,13 @@
     </div>
   </div>
 
-  <!--  -->
   <div id="menuItems" data-role="page">
-    <div data-role='header'>
-      <h1>Items</h1>
-      <a href="#restDetails" data-direction='reverse' data-icon="arrow-l">Menu</a>
-    </div>
     <div data-role='content'>
       <div class='typeInfo typeItem'>
         <div class='typeName'></div>
         <div class="typeDescrip"></div>
       </div>
-      <ul id='menuItemList' data-role='listview' class='foodItems'>
-      </ul>
+      <ul id='menuItemList' data-role='listview' class='foodItems'></ul>
     </div>
 
     <a href="#checkout">Order</a>
@@ -532,13 +506,6 @@
 
     <script>$('#extrasOverview').footer();</script>
   </div>
-
-  <div data-role="page" id="menuExtras">
-    <script>
-      $('#menuExtras').footer();
-    </script>
-  </div>
-
 
   <script type="text/javascript" charset="utf-8" src="script/handlers.js"></script>
 </body>

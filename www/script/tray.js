@@ -40,15 +40,6 @@ function populateExtras(){
   }
 }
 
-function createExtrasPage(index){
-    var data = JSON.parse(currItem)
-    var children = JSON.parse(currItem.children[index].children);
-
-    $('#menuExtrasTemplate').tmpl(data).appendTo('#menuExtras');
-    $("#extrasTemplate").tmpl(children).appendTo('#optionsList');
-    $.mobile.changePage("#menuExtras");
-}
-
 function addCurrItemToTray(){
   tray.count    += 1;
   calculateItemPrice(currItem);

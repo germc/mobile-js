@@ -11,7 +11,9 @@ $('#addToTray').click(function(){ addCurrItemToTray(); });
 //general link bindings
 $("#home_btn").bind("tap", getRestaurantList);
 $("#login_btn").bind("tap", loginUser);
+$("#history_btn").bind("tap", recentOrders);
 $("#checkout_btn").bind("tap", checkout);
+$("#tray_btn").bind("tap", loadTray);
 $("#createAddress_btn").bind("tap", createAddress);
 $("#changeDeliveryTime_btn").bind("tap", changeDeliveryTime);
 $(".typeItem").bind("tap", setCurrItem);

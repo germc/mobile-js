@@ -27,3 +27,6 @@ checkout: call this to create an Order object with the current tray, tip, and us
 getRestaurantList: returns a list of restaurants that deliver to the current user and satisfy the current search conditions
 getRestaurantDetails: returns a specific restaurant's info, including its menu as a nested array
 populateMenuItems: alternative function to load menu items for a specific restaurant, whose id is passed in as the sole parameter
+
+## order.js
+recentOrders: returns an array of recent orders for the currently logged-in user
