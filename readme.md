@@ -28,5 +28,5 @@ getRestaurantList: returns a list of restaurants that deliver to the current use
 getRestaurantDetails: returns a specific restaurant's info, including its menu as a nested array
 populateMenuItems: alternative function to load menu items for a specific restaurant, whose id is passed in as the sole parameter
 
-## order.js
+#### order.js
 recentOrders: returns an array of recent orders for the currently logged-in user
