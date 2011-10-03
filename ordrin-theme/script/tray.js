@@ -28,10 +28,10 @@ function populateExtras(){
 
   //if the item actually has extras, present those
   if (currItem.children) {
-    var data = currItem.children;
+    var data = JSON.parse(currItem.children);
     $('#trayItemTemplate').tmpl(data).appendTo('#extrasList');
-    $.mobile.changePage("#extrasOverview");
     $("#extrasList").listview("refresh");
+    $.mobile.changePage("#extrasOverview");
   }
   //the item has no extras to select, so just add it to tray
   else {
@@ -71,13 +71,7 @@ function removeCurrItemFromTray() {
   calculateItemPrice(currItem);
   tray.price -= parseFloat(currItem.price);
 
-  currItemDiv = $('#item_' + currItem.id + '_quantity');
   currItemDiv.html(currItem.quantity);
-  if (currItem.quantity > 0) {
-    $('#removeItemButton').tmpl(currItem).prependTo(currItemDiv);
-  } else {
-    currItem.inTray = false;
-  }
 }
 
 function calculateItemPrice(item){
@@ -113,6 +107,7 @@ function updateTrayPrice(tip){
 }
 
 function editTrayItem(i){
+  currItem                  = tray.items[i];
   currItem.originalQuantity = currItem.quantity;
   currItem.originalPrice    = currItem.price;
   populateExtras();

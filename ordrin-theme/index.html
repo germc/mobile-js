@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="css/home.css" />
     <!--<link rel="stylesheet" href="css/restaurants.css" />
     <link rel="stylesheet" href="css/settings.css" />-->
+    <link rel="stylesheet" href="css/ordrin.css" />
 
     <!-- templates for rendering dynamic ajax content -->
     <script id="restListTemplate" type="text/x-jquery-tmpl">
@@ -251,15 +252,9 @@
     <script>$('#restList').footer();</script>
   </div>
 
-  <div id="restDetails" data-role="page">
-    <div data-role="footer">
-      <div data-role="nav">
-        <script>$('#restDetails').footer();</script>
-      </div>
-    </div>
-  </div>
+  <div id="restDetails" data-role="page"></div>
 
-  <div data-role='page' id='timePicker'>
+  <div id="timePicker" data-role="page">
     <div data-role='content'>
       <p class='planBlack_txt'>
         The restaurant is not open now. Please select a time between <span id='deliverTimeOptions'></span>
@@ -366,23 +361,22 @@
     <div data-role="header"><h1>New Account</h1></div>
     <div data-role="content">
       <form action="#" method="get">
-
         <div data-role="fieldcontain">
-          <input type="text" name="email" id="createEmail" placeholder="Email">
+          <label for="email" class="ui-input-text">Email: </label>
+          <input type="text" name="email" id="createEmail">
         </div>
-
         <div data-role="fieldcontain">
-          <input type="password" name="password" id="createPassword" placeholder="Password">
+          <label for="password"  class="ui-input-text">Password: </label>
+          <input type="password" name="password" id="createPassword">
         </div>
-
         <div data-role="fieldcontain">
-          <input type="text" name="first" id="createFirstName" placeholder="First Name">
+          <label for="first"  class="ui-input-text">First Name: </label>
+          <input type="text" name="first" id="createFirstName">
         </div>
-
         <div data-role="fieldcontain">
-          <input type="text" name="last" id="createLastName" placeholder="Last Name">
+          <label for="last"  class="ui-input-text">Last Name: </label>
+          <input type="text" name="last" id="createLastName">
         </div>
-
         <div data-role="button" id="postAccount_btn" data-icon="check">Create</div>
       </form>
     </div>
@@ -393,50 +387,51 @@
       <p id="createAddressHeader"></p>
       <p id="createAddressSub"></p>
       <ul data-role='listview' class='formGroup' data-inset='true'>
-
         <div data-role="fieldcontain">
-          <input type="text" data-role='none' name="addr" id="createAddressAddress" placeholder="Address">
+          <div class='formLabel'>Address:</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="addr" id="createAddressAddress"></div>
         </div>
-
-        <div data-role="fieldcontain">
-          <input type="text" data-role='none' name="city" id="createAddressCity" placeholder="City">
+        <div  data-role="fieldcontain">
+          <div class='formLabel'>City:</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="city" id="createAddressCity"></div>
         </div>
-
-        <div data-role="fieldcontain">
-          <input type="text" data-role='none' name="state" id="createAddressState" placeholder="State">
+        <div  data-role="fieldcontain">
+          <div class="formLabel">State:</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="state" id="createAddressState"></div>
         </div>
-
-        <div data-role="fieldcontain">
-          <input type="text" data-role='none' name="zip" id="createAddressZip" placeholder="ZIP">
+        <div  data-role="fieldcontain">
+          <div class='formLabel'>Zip Code:</div>
+          <div class='inputContainer'><input type="text" data-role='none' name="zip" id="createAddressZip"></div>
         </div>
-
         <div data-role="button" id="createAddress_btn" data-icon="check">Create</div>
-      </ul>
-    </div>
-  </div>
 
-  <div data-role="page" id="history">
-    <div data-id='header' data-role='header'>
-      <h1>Order History</h1>
-    </div>
-    <div data-role='content'>
-      <ul data-role='listview'></ul>
+      </div>
     </div>
 
-    <script>$('#history').footer();</script>
-  </div>
+    <div data-role="page" id="history">
+      <div data-id='header' data-role='header'>
+        <h1>Order History</h1>
+      </div>
+      <div data-role='content'>
+        <ul data-role='listview'>
 
-  <!-- Edit Your Name, Addresses, etc. -->
-  <div data-role="page" id="settings">
-    <div data-id='header' data-role='header'>
-      <h1>Settings</h1>
+        </ul>
+      </div>
+
+      <script>$('#history').footer();</script>
     </div>
 
-    <div data-role='content'>
-      <ul id="settingsList" data-role='listview'></ul>
-    </div>
+    <!-- Edit Your Name, Addresses, etc. -->
+    <div data-role="page" id="settings">
+      <div data-id='header' data-role='header'>
+        <h1>Settings</h1>
+      </div>
+      <div data-role='content'>
+        <ul data-role='listview'>
+        </ul>
+      </div>
 
-    <script>$('#settings').footer();</script>
+      <script>$('#settings').footer();</script>
   </div>
 
   <div data-role="page" id="selectAddress">
